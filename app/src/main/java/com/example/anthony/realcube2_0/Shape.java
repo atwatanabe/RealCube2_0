@@ -5,7 +5,7 @@ import java.nio.FloatBuffer;
 public abstract class Shape
 {
     protected float[] coords;
-    protected int COORDS_PER_VERTEX;
+    protected final int COORDS_PER_VERTEX = 3;
     protected short[] drawOrder;
 
     protected FloatBuffer vertexBuffer;
@@ -21,10 +21,6 @@ public abstract class Shape
 
     protected float[] color;
 
-    //private final int vertexCount = triangleCoords.length / COORDS_PER_VERTEX;
-
-    //private final int vertexStride = COORDS_PER_VERTEX * 4;
-
     protected final String vertexShaderCode =
             "uniform mat4 uMVPMatrix;" +
                     "attribute vec4 vPosition;" +
@@ -37,6 +33,12 @@ public abstract class Shape
                     "void main() {" +
                     "    gl_FragColor = vColor;" +
                     "}";
+
+    //private final int vertexCount = triangleCoords.length / COORDS_PER_VERTEX;
+
+    //private final int vertexStride = COORDS_PER_VERTEX * 4;
+
+
 
 //    public Shape(float[] c, int cpv)
 //    {

@@ -18,8 +18,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(view.getContext(), GLActivity.class);
-                intent.putExtra("cubeDimenstions", "3x3x3");
-                startActivity(intent);
+                //intent.putExtra("cubeDimenstions", "3x3x3");
+                view.getContext().startActivity(intent);
             }
         });
 
@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(view.getContext(), SettingsActivity.class);
-                startActivity(intent);
+                view.getContext().startActivity(intent);
             }
         });
 

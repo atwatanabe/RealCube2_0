@@ -12,7 +12,6 @@ public class Square extends Shape
     //private FloatBuffer vertexBuffer;
     private ShortBuffer drawListBuffer;
 
-    //static final int COORDS_PER_VERTEX = 3;
     static float[] squareCoords = {
             -0.5f,  0.5f, 0.0f,
             -0.5f, -0.5f, 0.0f,
@@ -20,37 +19,74 @@ public class Square extends Shape
             0.5f,  0.5f, 0.0f
     };
 
-    static float[] altCoords = {
-            -0.5f, 0f, -0.5f,
-            -0.5f, 0f, 0.5f,
-            0.5f, 0f, 0.5f,
-            0.5f, 0f, -0.5f
-    };
+    public static float[] generateFace(int xDimen, int yDimen, float sideLength, float spacing)
+    {
+        int coordsPerSquare = 6;
+        float[] result = new float[xDimen * yDimen * coordsPerSquare];
+
+
+
+        return result;
+    }
+
+    public static float[] generateSquare(float sideLength)
+    {
+        float[] result = new float[0];
+
+        return result;
+    }
+
+
+    public Square(float[] altCoords)
+    {
+        if (altCoords.length % COORDS_PER_VERTEX == 0)
+        {
+            coords = new float[altCoords.length];
+            System.arraycopy(altCoords, 0, coords, 0, coords.length);
+        }
+        else
+        {
+            coords = new float[] {
+                    -0.5f, 0.5f, 0.0f,
+                    -0.5f, -0.5f, 0.0f,
+                    0.5f, -0.5f, 0.0f,
+                    -0.5f, 0.5f, 0.0f,
+                    0.5f, -0.5f, 0.0f,
+                    0.5f, 0.5f, 0.0f
+            };
+        }
+
+        init();
+    }
 
     public Square()
     {
         drawOrder = new short[] {0, 1, 2, 0, 2, 3};
 
-//        coords = new float[] {
-//            -0.5f, 0.5f, 0.0f,
-//            -0.5f, -0.5f, 0.0f,
-//            0.5f, -0.5f, 0.0f,
-//            -0.5f, 0.5f, 0.0f,
-//            0.5f, -0.5f, 0.0f,
-//            0.5f, 0.5f, 0.0f
-//        };
-
         coords = new float[] {
-            -0.5f, 0f, -0.5f,
-            -0.5f, 0f, 0.5f,
-            0.5f, 0f, 0.5f,
-            -0.5f, 0f, -0.5f,
-            0.5f, 0f, 0.5f,
-            0.5f, 0f, -0.5f
+            -0.5f, 0.5f, 0.0f,
+            -0.5f, -0.5f, 0.0f,
+            0.5f, -0.5f, 0.0f,
+            -0.5f, 0.5f, 0.0f,
+            0.5f, -0.5f, 0.0f,
+            0.5f, 0.5f, 0.0f
         };
 
+//        coords = new float[] {
+//            -0.5f, 0f, -0.5f,
+//            -0.5f, 0f, 0.5f,
+//            0.5f, 0f, 0.5f,
+//            -0.5f, 0f, -0.5f,
+//            0.5f, 0f, 0.5f,
+//            0.5f, 0f, -0.5f
+//        };
+
+        init();
+    }
+
+    private void init()
+    {
         vertexCount = 6;
-        COORDS_PER_VERTEX = 3;
         ByteBuffer bb = ByteBuffer.allocateDirect(coords.length * 4);
         bb.order(ByteOrder.nativeOrder());
 
@@ -66,11 +102,11 @@ public class Square extends Shape
         GLES20.glAttachShader(mProgram, fragmentShader);
         GLES20.glLinkProgram(mProgram);
 
-        ByteBuffer dlb = ByteBuffer.allocateDirect(drawOrder.length * 2);
-        dlb.order(ByteOrder.nativeOrder());
-        drawListBuffer = dlb.asShortBuffer();
-        drawListBuffer.put(drawOrder);
-        drawListBuffer.position(0);
+//        ByteBuffer dlb = ByteBuffer.allocateDirect(drawOrder.length * 2);
+//        dlb.order(ByteOrder.nativeOrder());
+//        drawListBuffer = dlb.asShortBuffer();
+//        drawListBuffer.put(drawOrder);
+//        drawListBuffer.position(0);
 
         color = new float[] {1f, 0f, 0f, 1.0f};
     }

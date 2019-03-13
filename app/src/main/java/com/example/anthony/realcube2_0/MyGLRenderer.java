@@ -11,6 +11,10 @@ import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.os.SystemClock;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
@@ -19,8 +23,7 @@ import static android.opengl.GLES20.GL_BACK;
 
 public class MyGLRenderer implements GLSurfaceView.Renderer
 {
-    private Triangle tri;
-    private Square squ;
+    private List<Shape> shapes;
 
     private final float[] vPMatrix = new float[16];
     private final float[] projectionMatrix = new float[16];
@@ -32,6 +35,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer
     private SensorManager sm;
     private Context context;
     private volatile float mAngle;
+    private Iterator<Shape> iter;
 
     public MyGLRenderer(Context c)
     {
@@ -51,6 +55,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer
         this.mAngle = mAngle;
     }
 
+    private Triangle tri;
+    private Square squ;
 
     public static int loadShader(int type, String shaderCode)
     {
@@ -65,9 +71,22 @@ public class MyGLRenderer implements GLSurfaceView.Renderer
     @Override
     public void onSurfaceCreated(GL10 unused, EGLConfig config)
     {
-        GLES20.glClearColor(0f, 0f, 0f, 1f);
-        tri = new Triangle();
+        GLES20.glClearColor(1f, 1f, 1f, 1f);
+        shapes = new ArrayList<Shape>();
+        //shapes.add(new Triangle());
+        shapes.add(new Square());
+        float[] squCoords = new float[] {
+            -0.5f, 1.6f, 0f,
+            -0.5f, 0.6f, 0f,
+            0.5f, 0.6f, 0f,
+            -0.5f, 1.6f, 0f,
+            0.5f, 0.6f, 0f,
+            0.5f, 1.6f, 0f
+        };
+        shapes.add(new Square(squCoords));
+        //tri = new Triangle();
         squ = new Square();
+        iter = shapes.iterator();
         //GLES20.glCullFace(GL_BACK);
     }
 
@@ -86,8 +105,17 @@ public class MyGLRenderer implements GLSurfaceView.Renderer
         Matrix.multiplyMM(vPMatrix, 0, projectionMatrix, 0, viewMatrix, 0);
         Matrix.multiplyMM(temp, 0, vPMatrix, 0, rotationMatrix, 0);
 
-        squ.draw(temp);
-        tri.draw(temp);
+        //tri.draw(temp);
+        //squ.draw(temp);
+
+        for (Shape s : shapes)
+        {
+            s.draw(temp);
+        }
+//        while (iter.hasNext())
+//        {
+//            iter.next().draw(temp);
+//        }
     }
 
     @Override

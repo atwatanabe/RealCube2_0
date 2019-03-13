@@ -42,7 +42,7 @@ public class Triangle extends Shape
 
     public Triangle()
     {
-        COORDS_PER_VERTEX = 3;
+        //COORDS_PER_VERTEX = 3;
         vertexCount = 3;
 
         coords = new float[] {
