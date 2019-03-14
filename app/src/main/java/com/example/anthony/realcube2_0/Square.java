@@ -18,28 +18,64 @@ public class Square extends Shape
             0.5f, -0.5f, 0.0f,
             0.5f,  0.5f, 0.0f
     };
+    private static int coordsPerSquare;
 
-    public static float[] generateFace(int xDimen, int yDimen, float sideLength, float spacing)
+    /*
+        Returns a FloatBuffer that contains the coordinates for a whole face
+        @param xDimen       the number of pieces along the "width" of the face.
+        @param yDimen       the number of pieces along the "height" of the face.
+        @param sideLength   the length of the sides of each piece's colored part.
+        @param spacing      the orthogonal distance between adjacent piece's colored parts.
+        @param side defines the plane and position of the face
+        @param distance     if > 0, generates the face @distance away from the origin
+                            else generates the face @xDimen * (@sideLength + @spacing) / 2 units away from the origin
+     */
+    public static FloatBuffer generateFace(int xDimen, int yDimen, float sideLength, float spacing, Cube3x3.Side side, float distance)
     {
-        int coordsPerSquare = 6;
-        float[] result = new float[xDimen * yDimen * coordsPerSquare];
+        int totalNumFloats = xDimen * yDimen * coordsPerSquare * 3;
 
+        ByteBuffer bb = ByteBuffer.allocateDirect(totalNumFloats * 4);
+        bb.order(ByteOrder.nativeOrder());
 
+        FloatBuffer result = bb.asFloatBuffer();
 
+        float[] temp = new float[totalNumFloats];
+
+        float d = distance >= 0 ? distance : xDimen * (sideLength + spacing) / 2f;
+        float faceWidth = xDimen * (sideLength + spacing);
+        float faceHeight = yDimen * (sideLength + spacing);
+
+        for (int x = 0; x < xDimen; ++x)
+        {
+            for (int y = 0; y < yDimen; ++y)
+            {
+                float xLeft = -(faceWidth / 2) + (x * (sideLength + spacing));
+                float xRight = xLeft + sideLength;
+                float yTop = (faceHeight / 2) - (y * (sideLength + spacing));
+                float yBottom = yTop - sideLength;
+
+                float[] vertices = {
+                        xLeft, yTop, d,
+                        xLeft, yBottom, d,
+                        xRight, yBottom, d,
+                        xLeft, yTop, d,
+                        xRight, yBottom, d,
+                        xRight, yTop, d
+                };
+                System.arraycopy(vertices, 0, temp, (y * coordsPerSquare * 3) + (x * yDimen * coordsPerSquare * 3), vertices.length);
+            }
+        }
+
+        result.put(temp);
+        result.position(0);
         return result;
     }
 
-    public static float[] generateSquare(float sideLength)
-    {
-        float[] result = new float[0];
-
-        return result;
-    }
 
 
     public Square(float[] altCoords)
     {
-        if (altCoords.length % COORDS_PER_VERTEX == 0)
+        if (altCoords.length % (COORDS_PER_VERTEX) == 0)
         {
             coords = new float[altCoords.length];
             System.arraycopy(altCoords, 0, coords, 0, coords.length);
@@ -56,6 +92,8 @@ public class Square extends Shape
             };
         }
 
+
+        coordsPerSquare = 6;
         init();
     }
 
@@ -81,6 +119,9 @@ public class Square extends Shape
 //            0.5f, 0f, -0.5f
 //        };
 
+        vertexStride = COORDS_PER_VERTEX * 4;
+
+        coordsPerSquare = 6;
         init();
     }
 

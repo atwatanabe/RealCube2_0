@@ -25,6 +25,8 @@ public class Cube3x3
         Up, Down, Left, Right, Front, Back
     }
 
+
+
     public void initializeCube()
     {
         Color[][] up = new Color[][]

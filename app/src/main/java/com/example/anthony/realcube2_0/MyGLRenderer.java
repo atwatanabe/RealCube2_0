@@ -10,7 +10,9 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.os.SystemClock;
+import android.util.Log;
 
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -58,6 +60,13 @@ public class MyGLRenderer implements GLSurfaceView.Renderer
     private Triangle tri;
     private Square squ;
 
+    private int vPMatrixHandle;
+    private int positionHandle;
+    private int colorHandle;
+    private int mProgram;
+    private int vertexStride;
+    private FloatBuffer vertexBuffer;
+
     public static int loadShader(int type, String shaderCode)
     {
         int shader = GLES20.glCreateShader(type);
@@ -87,6 +96,16 @@ public class MyGLRenderer implements GLSurfaceView.Renderer
         //tri = new Triangle();
         squ = new Square();
         iter = shapes.iterator();
+
+        int vertexShader = loadShader(GLES20.GL_VERTEX_SHADER, Shape.vertexShaderCode);
+        int fragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER, Shape.fragmentShaderCode);
+        mProgram = GLES20.glCreateProgram();
+        GLES20.glAttachShader(mProgram, vertexShader);
+        GLES20.glAttachShader(mProgram, fragmentShader);
+        GLES20.glLinkProgram(mProgram);
+        vertexStride = Shape.COORDS_PER_VERTEX * 4;
+        vertexBuffer = Square.generateFace(2, 2, 0.5f, 0.1f, Cube3x3.Side.Front, 0f);
+
         //GLES20.glCullFace(GL_BACK);
     }
 
@@ -108,10 +127,26 @@ public class MyGLRenderer implements GLSurfaceView.Renderer
         //tri.draw(temp);
         //squ.draw(temp);
 
-        for (Shape s : shapes)
-        {
-            s.draw(temp);
-        }
+        float[] color = {1f, 0f, 0f, 1f};
+        vPMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uMVPMatrix");
+        GLES20.glUniformMatrix4fv(vPMatrixHandle, 1, false, temp, 0);
+        GLES20.glUseProgram(mProgram);
+        positionHandle = GLES20.glGetAttribLocation(mProgram, "vPosition");
+        GLES20.glEnableVertexAttribArray(positionHandle);
+        Log.i("test", vertexBuffer.toString());
+        GLES20.glVertexAttribPointer(positionHandle, Shape.COORDS_PER_VERTEX, GLES20.GL_FLOAT, false, vertexStride, vertexBuffer);
+        colorHandle = GLES20.glGetUniformLocation(mProgram, "vColor");
+        GLES20.glUniform4fv(colorHandle, 1, color, 0);
+        int vertexCount = 3 * 3 * 6;
+        GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, vertexCount);
+        GLES20.glDisableVertexAttribArray(positionHandle);
+
+//        for (Shape s : shapes)
+//        {
+//            s.draw(temp);
+//        }
+
+
 //        while (iter.hasNext())
 //        {
 //            iter.next().draw(temp);

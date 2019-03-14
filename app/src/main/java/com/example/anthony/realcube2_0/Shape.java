@@ -5,7 +5,7 @@ import java.nio.FloatBuffer;
 public abstract class Shape
 {
     protected float[] coords;
-    protected final int COORDS_PER_VERTEX = 3;
+    public static final int COORDS_PER_VERTEX = 3;
     protected short[] drawOrder;
 
     protected FloatBuffer vertexBuffer;
@@ -21,13 +21,13 @@ public abstract class Shape
 
     protected float[] color;
 
-    protected final String vertexShaderCode =
+    public static final String vertexShaderCode =
             "uniform mat4 uMVPMatrix;" +
                     "attribute vec4 vPosition;" +
                     "void main() {" +
                     "    gl_Position = uMVPMatrix * vPosition;" +
                     "}";
-    protected final String fragmentShaderCode =
+    public static final String fragmentShaderCode =
             "precision mediump float;" +
                     "uniform vec4 vColor;" +
                     "void main() {" +
