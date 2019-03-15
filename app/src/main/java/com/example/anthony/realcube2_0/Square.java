@@ -1,7 +1,7 @@
 package com.example.anthony.realcube2_0;
 
 import android.opengl.GLES20;
-import android.util.Log;
+import android.opengl.Matrix;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -19,7 +19,9 @@ public class Square extends Shape
             0.5f, -0.5f, 0.0f,
             0.5f,  0.5f, 0.0f
     };
-    private static int coordsPerSquare = 6;
+    private static int verticesPerSquare = 6;
+
+    private static int coordsPerVertex = 3;
 
     /*
         Returns a FloatBuffer that contains the coordinates for a whole face
@@ -33,7 +35,9 @@ public class Square extends Shape
      */
     public static float[] generateFace(int xDimen, int yDimen, float sideLength, float spacing, Cube3x3.Side side, float distance)
     {
-        int totalNumFloats = xDimen * yDimen * coordsPerSquare * 3;
+        int numSquares = xDimen * yDimen;
+        int numVertices = numSquares * verticesPerSquare;
+        int totalNumFloats = numVertices * coordsPerVertex;
 
         ByteBuffer bb = ByteBuffer.allocateDirect(totalNumFloats * 4);
         bb.order(ByteOrder.nativeOrder());
@@ -43,6 +47,7 @@ public class Square extends Shape
         float[] temp = new float[totalNumFloats];
 
         float d = distance > 0 ? distance : xDimen * (sideLength + spacing) / 2f;
+//        d *= -1;
         float faceWidth = xDimen * (sideLength + spacing);
         float faceHeight = yDimen * (sideLength + spacing);
 
@@ -50,7 +55,6 @@ public class Square extends Shape
         {
             for (int y = 0; y < yDimen; ++y)
             {
-                //Log.i("loop index", new Integer(x).toString() + " " + new Integer(y).toString());
                 float xLeft = -(faceWidth / 2) + (x * (sideLength + spacing)) + spacing / 2;
                 float xRight = xLeft + sideLength;
                 float yTop = (faceHeight / 2) - (y * (sideLength + spacing)) - spacing / 2;
@@ -64,13 +68,48 @@ public class Square extends Shape
                         xRight, yBottom, d,
                         xRight, yTop, d
                 };
-                System.arraycopy(vertices, 0, temp, (y * coordsPerSquare * 3) + (x * yDimen * coordsPerSquare * 3), vertices.length);
+                System.arraycopy(vertices, 0, temp, (y * verticesPerSquare * 3) + (x * yDimen * verticesPerSquare * 3), vertices.length);
             }
+        }
+
+        float[] orientationMatrix;
+
+        switch (side)
+        {
+            case Up:
+
+                break;
+            case Down:
+
+                break;
+            case Left:
+
+                break;
+            case Right:
+
+                break;
+            case Front:
+
+                break;
+            case Back:
+
+                break;
+            default:
+                orientationMatrix = new float[16];
+                Matrix.setIdentityM(orientationMatrix, 0);
+                break;
+        }
+
+        for (int i = 0; i < numSquares; i += verticesPerSquare * coordsPerVertex)
+        {
+
         }
 
 //        result.put(temp);
 //        result.position(0);
 //        return result;
+
+
         return temp;
     }
 
@@ -96,7 +135,7 @@ public class Square extends Shape
         }
 
 
-        coordsPerSquare = 6;
+        verticesPerSquare = 6;
         init();
     }
 
@@ -124,7 +163,7 @@ public class Square extends Shape
 
         vertexStride = COORDS_PER_VERTEX * 4;
 
-        coordsPerSquare = 6;
+        verticesPerSquare = 6;
         init();
     }
 

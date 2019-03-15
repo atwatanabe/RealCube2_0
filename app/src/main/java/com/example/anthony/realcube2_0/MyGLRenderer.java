@@ -111,7 +111,10 @@ public class MyGLRenderer implements GLSurfaceView.Renderer
         int x = 4;
         int y = 7;
         vertexCount = x * y * 6;
-        float[] coords = Square.generateFace(x, y, 0.3f, 0.01f, Cube3x3.Side.Front, 0.01f);
+
+        TwistyPuzzle p1;
+
+        float[] coords = Square.generateFace(x, y, 0.3f, 0.01f, Cube3x3.Side.Front, 0.0f);
         ByteBuffer bb = ByteBuffer.allocateDirect(coords.length * 4);
         bb.order(ByteOrder.nativeOrder());
         vertexBuffer = bb.asFloatBuffer();

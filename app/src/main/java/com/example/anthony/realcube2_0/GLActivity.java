@@ -121,7 +121,7 @@ public class GLActivity extends Activity {
             setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
             sm = (SensorManager) getSystemService(SENSOR_SERVICE);
             rvs = sm.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
-            registerListener(); //sm.registerListener(this, rvs, 10000);
+            registerListener();
         }
 
 
@@ -132,8 +132,9 @@ public class GLActivity extends Activity {
             if (e.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR)
             {
                 float[] rotationMatrix = new float[16];
-                int index = 3;
-                //e.values[index] = -e.values[index];
+                int index = 4;
+                //Log.i("sensor vector size", new Integer(e.values.length).toString());
+                e.values[index] = -e.values[index];
                 sm.getRotationMatrixFromVector(rotationMatrix, e.values);
                 renderer.setRotationMatrix(rotationMatrix);
                 requestRender();
