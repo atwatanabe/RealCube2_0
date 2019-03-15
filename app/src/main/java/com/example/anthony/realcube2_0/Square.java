@@ -1,6 +1,7 @@
 package com.example.anthony.realcube2_0;
 
 import android.opengl.GLES20;
+import android.util.Log;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -18,7 +19,7 @@ public class Square extends Shape
             0.5f, -0.5f, 0.0f,
             0.5f,  0.5f, 0.0f
     };
-    private static int coordsPerSquare;
+    private static int coordsPerSquare = 6;
 
     /*
         Returns a FloatBuffer that contains the coordinates for a whole face
@@ -30,7 +31,7 @@ public class Square extends Shape
         @param distance     if > 0, generates the face @distance away from the origin
                             else generates the face @xDimen * (@sideLength + @spacing) / 2 units away from the origin
      */
-    public static FloatBuffer generateFace(int xDimen, int yDimen, float sideLength, float spacing, Cube3x3.Side side, float distance)
+    public static float[] generateFace(int xDimen, int yDimen, float sideLength, float spacing, Cube3x3.Side side, float distance)
     {
         int totalNumFloats = xDimen * yDimen * coordsPerSquare * 3;
 
@@ -41,7 +42,7 @@ public class Square extends Shape
 
         float[] temp = new float[totalNumFloats];
 
-        float d = distance >= 0 ? distance : xDimen * (sideLength + spacing) / 2f;
+        float d = distance > 0 ? distance : xDimen * (sideLength + spacing) / 2f;
         float faceWidth = xDimen * (sideLength + spacing);
         float faceHeight = yDimen * (sideLength + spacing);
 
@@ -49,9 +50,10 @@ public class Square extends Shape
         {
             for (int y = 0; y < yDimen; ++y)
             {
-                float xLeft = -(faceWidth / 2) + (x * (sideLength + spacing));
+                //Log.i("loop index", new Integer(x).toString() + " " + new Integer(y).toString());
+                float xLeft = -(faceWidth / 2) + (x * (sideLength + spacing)) + spacing / 2;
                 float xRight = xLeft + sideLength;
-                float yTop = (faceHeight / 2) - (y * (sideLength + spacing));
+                float yTop = (faceHeight / 2) - (y * (sideLength + spacing)) - spacing / 2;
                 float yBottom = yTop - sideLength;
 
                 float[] vertices = {
@@ -66,9 +68,10 @@ public class Square extends Shape
             }
         }
 
-        result.put(temp);
-        result.position(0);
-        return result;
+//        result.put(temp);
+//        result.position(0);
+//        return result;
+        return temp;
     }
 
 

@@ -12,6 +12,8 @@ import android.opengl.Matrix;
 import android.os.SystemClock;
 import android.util.Log;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -38,6 +40,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer
     private Context context;
     private volatile float mAngle;
     private Iterator<Shape> iter;
+    private int vertexCount;
 
     public MyGLRenderer(Context c)
     {
@@ -104,7 +107,24 @@ public class MyGLRenderer implements GLSurfaceView.Renderer
         GLES20.glAttachShader(mProgram, fragmentShader);
         GLES20.glLinkProgram(mProgram);
         vertexStride = Shape.COORDS_PER_VERTEX * 4;
-        vertexBuffer = Square.generateFace(2, 2, 0.5f, 0.1f, Cube3x3.Side.Front, 0f);
+
+        int x = 4;
+        int y = 7;
+        vertexCount = x * y * 6;
+        float[] coords = Square.generateFace(x, y, 0.3f, 0.01f, Cube3x3.Side.Front, 0.01f);
+        ByteBuffer bb = ByteBuffer.allocateDirect(coords.length * 4);
+        bb.order(ByteOrder.nativeOrder());
+        vertexBuffer = bb.asFloatBuffer();
+        vertexBuffer.put(coords);
+        vertexBuffer.position(0);
+
+        Log.i("vb length", new Integer(vertexBuffer.capacity()).toString());
+
+        Log.i("bb length", new Integer(bb.capacity()).toString());
+//        for (float f : coords)
+//            Log.i("vertices", new Float(f).toString());
+        Log.i("coords length", new Integer(coords.length).toString());
+        //vertexBuffer = Square.generateFace(3, 3, 0.5f, 0.1f, Cube3x3.Side.Front, 0f);
 
         //GLES20.glCullFace(GL_BACK);
     }
@@ -133,11 +153,10 @@ public class MyGLRenderer implements GLSurfaceView.Renderer
         GLES20.glUseProgram(mProgram);
         positionHandle = GLES20.glGetAttribLocation(mProgram, "vPosition");
         GLES20.glEnableVertexAttribArray(positionHandle);
-        Log.i("test", vertexBuffer.toString());
+        //Log.i("test", vertexBuffer.toString());
         GLES20.glVertexAttribPointer(positionHandle, Shape.COORDS_PER_VERTEX, GLES20.GL_FLOAT, false, vertexStride, vertexBuffer);
         colorHandle = GLES20.glGetUniformLocation(mProgram, "vColor");
         GLES20.glUniform4fv(colorHandle, 1, color, 0);
-        int vertexCount = 3 * 3 * 6;
         GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, vertexCount);
         GLES20.glDisableVertexAttribArray(positionHandle);
 
@@ -160,7 +179,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer
 
         float ratio = (float) width / height;
 
-        Matrix.frustumM(projectionMatrix, 0, -ratio, ratio, -1, 1, 1, 7);
+        Matrix.frustumM(projectionMatrix, 0, -ratio, ratio, -1, 1, 1, 20);
     }
 
 }
