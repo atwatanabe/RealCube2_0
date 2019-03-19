@@ -108,26 +108,33 @@ public class MyGLRenderer implements GLSurfaceView.Renderer
         GLES20.glLinkProgram(mProgram);
         vertexStride = Shape.COORDS_PER_VERTEX * 4;
 
-        int x = 4;
-        int y = 7;
-        vertexCount = x * y * 6;
+        int x = 3;
+        int y = 4;
+        int z = 7;
+        float sideLength = 0.5f;
+        float spacing = 0.1f;
+        vertexCount = x * y * z * 6;
+        float[][] colors = {
+                {0xff / 256f, 0xff / 256f, 0xff / 256f},
+                {0xff / 256f, 0xd5 / 256f, 0x00 / 256f},
+                {0xc4 / 256f, 0x1e / 256f, 0x3a / 256f},
+                {0xff / 256f, 0x58 / 256f, 0x00 / 256f},
+                {0x00 / 256f, 0x51 / 256f, 0xba / 256f},
+                {0x00 / 256f, 0x9e / 256f, 0x60 / 256f}
+        };
 
-        TwistyPuzzle p1;
+        TwistyPuzzle p1 = new Cuboid(x, y, z, sideLength, spacing, colors);
 
-        float[] coords = Square.generateFace(x, y, 0.3f, 0.01f, Cube3x3.Side.Front, 0.0f);
+        //float[] coords = Square.generateFace(x, y, sideLength, spacing, Cube3x3x3.Side.Front, 0.0f);
+        float[] coords = p1.getCoords();
         ByteBuffer bb = ByteBuffer.allocateDirect(coords.length * 4);
         bb.order(ByteOrder.nativeOrder());
         vertexBuffer = bb.asFloatBuffer();
         vertexBuffer.put(coords);
         vertexBuffer.position(0);
 
-        Log.i("vb length", new Integer(vertexBuffer.capacity()).toString());
 
-        Log.i("bb length", new Integer(bb.capacity()).toString());
-//        for (float f : coords)
-//            Log.i("vertices", new Float(f).toString());
-        Log.i("coords length", new Integer(coords.length).toString());
-        //vertexBuffer = Square.generateFace(3, 3, 0.5f, 0.1f, Cube3x3.Side.Front, 0f);
+        //vertexBuffer = Square.generateFace(3, 3, 0.5f, 0.1f, Cube3x3x3.Side.Front, 0f);
 
         //GLES20.glCullFace(GL_BACK);
     }

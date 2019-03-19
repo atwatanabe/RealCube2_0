@@ -59,4 +59,13 @@ public abstract class Shape
 
     public abstract void draw(float[] mvpMatrix);
 
+    public float[] getCoords()
+    {
+        return coords;
+    }
+
+    public int getNumCoords()
+    {
+        return vertexCount * COORDS_PER_VERTEX;
+    }
 }

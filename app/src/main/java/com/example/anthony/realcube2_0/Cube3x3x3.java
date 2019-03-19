@@ -5,11 +5,11 @@ import android.util.Log;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class Cube3x3
+public class Cube3x3x3
 {
     protected Map<Side, Color[][]> sides;
 
-    public Cube3x3()
+    public Cube3x3x3()
     {
         sides = new TreeMap<Side, Color[][]>();
         initializeCube();

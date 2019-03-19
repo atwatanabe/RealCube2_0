@@ -19,9 +19,9 @@ public class Square extends Shape
             0.5f, -0.5f, 0.0f,
             0.5f,  0.5f, 0.0f
     };
-    private static int verticesPerSquare = 6;
+    public static int verticesPerSquare = 6;
 
-    private static int coordsPerVertex = 3;
+    public static int coordsPerVertex = 3;
 
     /*
         Returns a FloatBuffer that contains the coordinates for a whole face
@@ -33,7 +33,7 @@ public class Square extends Shape
         @param distance     if > 0, generates the face @distance away from the origin
                             else generates the face @xDimen * (@sideLength + @spacing) / 2 units away from the origin
      */
-    public static float[] generateFace(int xDimen, int yDimen, float sideLength, float spacing, Cube3x3.Side side, float distance)
+    public static float[] generateFace(int xDimen, int yDimen, float sideLength, float spacing, Cube3x3x3.Side side, float distance)
     {
         int numSquares = xDimen * yDimen;
         int numVertices = numSquares * verticesPerSquare;
@@ -113,14 +113,19 @@ public class Square extends Shape
         return temp;
     }
 
-
+    public Square(float[] altCoords, float[] aColor)
+    {
+        this(altCoords);
+        color = aColor;
+    }
 
     public Square(float[] altCoords)
     {
         if (altCoords.length % (COORDS_PER_VERTEX) == 0)
         {
-            coords = new float[altCoords.length];
-            System.arraycopy(altCoords, 0, coords, 0, coords.length);
+//            coords = new float[altCoords.length];
+//            System.arraycopy(altCoords, 0, coords, 0, coords.length);
+            coords = altCoords;
         }
         else
         {
@@ -134,7 +139,7 @@ public class Square extends Shape
             };
         }
 
-
+        color = new float[] {1f, 0f, 0f, 1.0f};
         verticesPerSquare = 6;
         init();
     }
@@ -152,18 +157,10 @@ public class Square extends Shape
             0.5f, 0.5f, 0.0f
         };
 
-//        coords = new float[] {
-//            -0.5f, 0f, -0.5f,
-//            -0.5f, 0f, 0.5f,
-//            0.5f, 0f, 0.5f,
-//            -0.5f, 0f, -0.5f,
-//            0.5f, 0f, 0.5f,
-//            0.5f, 0f, -0.5f
-//        };
-
         vertexStride = COORDS_PER_VERTEX * 4;
 
         verticesPerSquare = 6;
+        color = new float[] {1f, 0f, 0f, 1.0f};
         init();
     }
 
@@ -191,7 +188,6 @@ public class Square extends Shape
 //        drawListBuffer.put(drawOrder);
 //        drawListBuffer.position(0);
 
-        color = new float[] {1f, 0f, 0f, 1.0f};
     }
 
     public void draw(float[] mvpMatrix)

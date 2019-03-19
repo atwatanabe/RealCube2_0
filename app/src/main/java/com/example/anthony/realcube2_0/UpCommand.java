@@ -2,10 +2,10 @@ package com.example.anthony.realcube2_0;
 
 public class UpCommand implements Command
 {
-    private Cube3x3 cube;
+    private Cube3x3x3 cube;
     private boolean inverted;
 
-    public UpCommand(Cube3x3 c, boolean invert)
+    public UpCommand(Cube3x3x3 c, boolean invert)
     {
         cube = c;
         inverted = invert;
