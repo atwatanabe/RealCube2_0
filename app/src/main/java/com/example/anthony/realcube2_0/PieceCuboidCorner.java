@@ -2,12 +2,15 @@ package com.example.anthony.realcube2_0;
 
 import android.util.Log;
 
+import java.util.ArrayList;
+
 public class PieceCuboidCorner extends Piece
 {
     public PieceCuboidCorner(float[] coords, float[][] colors)
     {
         try
         {
+            faces = new ArrayList<Shape>(3);
             int squareStride = Square.coordsPerVertex * Square.verticesPerSquare;
             float[] face0 = new float[squareStride];
             float[] face1 = new float[squareStride];

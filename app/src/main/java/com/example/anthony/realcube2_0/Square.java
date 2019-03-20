@@ -47,30 +47,10 @@ public class Square extends Shape
         float[] temp = new float[totalNumFloats];
 
         float d = distance > 0 ? distance : xDimen * (sideLength + spacing) / 2f;
-//        d *= -1;
         float faceWidth = xDimen * (sideLength + spacing);
         float faceHeight = yDimen * (sideLength + spacing);
 
-        for (int x = 0; x < xDimen; ++x)
-        {
-            for (int y = 0; y < yDimen; ++y)
-            {
-                float xLeft = -(faceWidth / 2) + (x * (sideLength + spacing)) + spacing / 2;
-                float xRight = xLeft + sideLength;
-                float yTop = (faceHeight / 2) - (y * (sideLength + spacing)) - spacing / 2;
-                float yBottom = yTop - sideLength;
 
-                float[] vertices = {
-                        xLeft, yTop, d,
-                        xLeft, yBottom, d,
-                        xRight, yBottom, d,
-                        xLeft, yTop, d,
-                        xRight, yBottom, d,
-                        xRight, yTop, d
-                };
-                System.arraycopy(vertices, 0, temp, (y * verticesPerSquare * 3) + (x * yDimen * verticesPerSquare * 3), vertices.length);
-            }
-        }
 
         float[] orientationMatrix;
 
@@ -78,20 +58,139 @@ public class Square extends Shape
         {
             case Up:
 
+                for (int x = 0; x < xDimen; ++x)
+                {
+                    for (int y = 0; y < yDimen; ++y)
+                    {
+                        float xLeft = -(faceWidth / 2) + (x * (sideLength + spacing)) + spacing / 2;
+                        float xRight = xLeft + sideLength;
+                        float zBack = -(faceHeight / 2) + (y * (sideLength + spacing)) + spacing / 2;
+                        float zFront = zBack + sideLength;
+
+                        float[] vertices = {
+                            xLeft, d, zBack,
+                            xLeft, d, zFront,
+                            xRight, d, zFront,
+                            xLeft, d, zBack,
+                            xRight, d, zFront,
+                            xRight, d, zBack
+                        };
+                        System.arraycopy(vertices, 0, temp, (y * verticesPerSquare * 3) + (x * yDimen * verticesPerSquare * 3), vertices.length);
+                    }
+                }
                 break;
             case Down:
+                d = -d;
+                for (int x = 0; x < xDimen; ++x)
+                {
+                    for (int y = 0; y < yDimen; ++y)
+                    {
+                        float xLeft = -(faceWidth / 2) + (x * (sideLength + spacing)) + spacing / 2;
+                        float xRight = xLeft + sideLength;
+                        float zBack = -(faceHeight / 2) + (y * (sideLength + spacing)) + spacing / 2;
+                        float zFront = zBack + sideLength;
 
+                        float[] vertices = {
+                                xLeft, d, zBack,
+                                xLeft, d, zFront,
+                                xRight, d, zFront,
+                                xLeft, d, zBack,
+                                xRight, d, zFront,
+                                xRight, d, zBack
+                        };
+                        System.arraycopy(vertices, 0, temp, (y * verticesPerSquare * 3) + (x * yDimen * verticesPerSquare * 3), vertices.length);
+                    }
+                }
                 break;
             case Left:
+                d = -d;
+                for (int x = 0; x < xDimen; ++x)
+                {
+                    for (int y = 0; y < yDimen; ++y)
+                    {
+                        float xBack = -(faceWidth / 2) + (x * (sideLength + spacing)) + spacing / 2;
+                        float xFront = xBack + sideLength;
+                        float yTop = (faceHeight / 2) - (y * (sideLength + spacing)) - spacing / 2;
+                        float yBottom = yTop - sideLength;
 
+                        float[] vertices = {
+                            d, yTop, xBack,
+                            d, yBottom, xBack,
+                            d, yBottom, xFront,
+                            d, yTop, xBack,
+                            d, yBottom, xFront,
+                            d, yTop, xFront
+                        };
+                        System.arraycopy(vertices, 0, temp, (y * verticesPerSquare * 3) + (x * yDimen * verticesPerSquare * 3), vertices.length);
+                    }
+                }
                 break;
             case Right:
+                for (int x = 0; x < xDimen; ++x)
+                {
+                    for (int y = 0; y < yDimen; ++y)
+                    {
+                        float xBack = -(faceWidth / 2) + (x * (sideLength + spacing)) + spacing / 2;
+                        float xFront = xBack + sideLength;
+                        float yTop = (faceHeight / 2) - (y * (sideLength + spacing)) - spacing / 2;
+                        float yBottom = yTop - sideLength;
 
+                        float[] vertices = {
+                                d, yTop, xBack,
+                                d, yBottom, xBack,
+                                d, yBottom, xFront,
+                                d, yTop, xBack,
+                                d, yBottom, xFront,
+                                d, yTop, xFront
+                        };
+                        System.arraycopy(vertices, 0, temp, (y * verticesPerSquare * 3) + (x * yDimen * verticesPerSquare * 3), vertices.length);
+                    }
+                }
                 break;
             case Front:
+                for (int x = 0; x < xDimen; ++x)
+                {
+                    for (int y = 0; y < yDimen; ++y)
+                    {
+                        float xLeft = -(faceWidth / 2) + (x * (sideLength + spacing)) + spacing / 2;
+                        float xRight = xLeft + sideLength;
+                        float yTop = (faceHeight / 2) - (y * (sideLength + spacing)) - spacing / 2;
+                        float yBottom = yTop - sideLength;
 
+                        float[] vertices = {
+                                xLeft, yTop, d,
+                                xLeft, yBottom, d,
+                                xRight, yBottom, d,
+                                xLeft, yTop, d,
+                                xRight, yBottom, d,
+                                xRight, yTop, d
+                        };
+                        System.arraycopy(vertices, 0, temp, (y * verticesPerSquare * 3) + (x * yDimen * verticesPerSquare * 3), vertices.length);
+                    }
+                }
                 break;
             case Back:
+                d = -d;
+                for (int x = 0; x < xDimen; ++x)
+                {
+                    for (int y = 0; y < yDimen; ++y)
+                    {
+                        float xLeft = -(faceWidth / 2) + (x * (sideLength + spacing)) + spacing / 2;
+                        float xRight = xLeft + sideLength;
+                        float yTop = (faceHeight / 2) - (y * (sideLength + spacing)) - spacing / 2;
+                        float yBottom = yTop - sideLength;
+
+                        float[] vertices = {
+                                xLeft, yTop, d,
+                                xLeft, yBottom, d,
+                                xRight, yBottom, d,
+                                xLeft, yTop, d,
+                                xRight, yBottom, d,
+                                xRight, yTop, d
+                        };
+                        System.arraycopy(vertices, 0, temp, (y * verticesPerSquare * 3) + (x * yDimen * verticesPerSquare * 3), vertices.length);
+                    }
+                }
 
                 break;
             default:

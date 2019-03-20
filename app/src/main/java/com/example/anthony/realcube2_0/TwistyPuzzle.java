@@ -12,9 +12,17 @@ public abstract class TwistyPuzzle
             p.draw(mvpMatrix);
     }
 
+    public int getNumCoords()
+    {
+        int total = 0;
+        for (Piece p : pieces)
+            total += p.getNumCoords();
+        return total;
+    }
+
     public float[] getCoords()
     {
-        float[] result = new float[0];
+        float[] result = new float[getNumCoords()];
         int index = 0;
 
         for (Piece p : pieces)
