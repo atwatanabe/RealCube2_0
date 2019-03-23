@@ -50,8 +50,6 @@ public class Square extends Shape
         float faceWidth = xDimen * (sideLength + spacing);
         float faceHeight = yDimen * (sideLength + spacing);
 
-
-
         float[] orientationMatrix;
 
         switch (side)
@@ -87,16 +85,16 @@ public class Square extends Shape
                     {
                         float xLeft = -(faceWidth / 2) + (x * (sideLength + spacing)) + spacing / 2;
                         float xRight = xLeft + sideLength;
-                        float zBack = -(faceHeight / 2) + (y * (sideLength + spacing)) + spacing / 2;
-                        float zFront = zBack + sideLength;
+                        float zFront = (faceHeight / 2) - (y * (sideLength + spacing)) - spacing / 2;
+                        float zBack = zFront - sideLength;
 
                         float[] vertices = {
-                                xLeft, d, zBack,
                                 xLeft, d, zFront,
-                                xRight, d, zFront,
                                 xLeft, d, zBack,
-                                xRight, d, zFront,
-                                xRight, d, zBack
+                                xRight, d, zBack,
+                                xLeft, d, zFront,
+                                xRight, d, zBack,
+                                xRight, d, zFront
                         };
                         System.arraycopy(vertices, 0, temp, (y * verticesPerSquare * 3) + (x * yDimen * verticesPerSquare * 3), vertices.length);
                     }
@@ -108,18 +106,18 @@ public class Square extends Shape
                 {
                     for (int y = 0; y < yDimen; ++y)
                     {
-                        float xBack = -(faceWidth / 2) + (x * (sideLength + spacing)) + spacing / 2;
-                        float xFront = xBack + sideLength;
+                        float zBack = -(faceWidth / 2) + (x * (sideLength + spacing)) + spacing / 2;
+                        float zFront = zBack + sideLength;
                         float yTop = (faceHeight / 2) - (y * (sideLength + spacing)) - spacing / 2;
                         float yBottom = yTop - sideLength;
 
                         float[] vertices = {
-                            d, yTop, xBack,
-                            d, yBottom, xBack,
-                            d, yBottom, xFront,
-                            d, yTop, xBack,
-                            d, yBottom, xFront,
-                            d, yTop, xFront
+                            d, yTop, zBack,
+                            d, yBottom, zBack,
+                            d, yBottom, zFront,
+                            d, yTop, zBack,
+                            d, yBottom, zFront,
+                            d, yTop, zFront
                         };
                         System.arraycopy(vertices, 0, temp, (y * verticesPerSquare * 3) + (x * yDimen * verticesPerSquare * 3), vertices.length);
                     }
@@ -130,18 +128,18 @@ public class Square extends Shape
                 {
                     for (int y = 0; y < yDimen; ++y)
                     {
-                        float xBack = -(faceWidth / 2) + (x * (sideLength + spacing)) + spacing / 2;
-                        float xFront = xBack + sideLength;
+                        float zFront = (faceWidth / 2) - (x * (sideLength + spacing)) - spacing / 2;
+                        float zBack = zFront - sideLength;
                         float yTop = (faceHeight / 2) - (y * (sideLength + spacing)) - spacing / 2;
                         float yBottom = yTop - sideLength;
 
                         float[] vertices = {
-                                d, yTop, xBack,
-                                d, yBottom, xBack,
-                                d, yBottom, xFront,
-                                d, yTop, xBack,
-                                d, yBottom, xFront,
-                                d, yTop, xFront
+                                d, yTop, zFront,
+                                d, yBottom, zFront,
+                                d, yBottom, zBack,
+                                d, yTop, zFront,
+                                d, yBottom, zBack,
+                                d, yTop, zBack
                         };
                         System.arraycopy(vertices, 0, temp, (y * verticesPerSquare * 3) + (x * yDimen * verticesPerSquare * 3), vertices.length);
                     }
@@ -175,8 +173,8 @@ public class Square extends Shape
                 {
                     for (int y = 0; y < yDimen; ++y)
                     {
-                        float xLeft = -(faceWidth / 2) + (x * (sideLength + spacing)) + spacing / 2;
-                        float xRight = xLeft + sideLength;
+                        float xLeft = (faceWidth / 2) - (x * (sideLength + spacing)) - spacing / 2;
+                        float xRight = xLeft - sideLength;
                         float yTop = (faceHeight / 2) - (y * (sideLength + spacing)) - spacing / 2;
                         float yBottom = yTop - sideLength;
 
@@ -214,8 +212,11 @@ public class Square extends Shape
 
     public Square(float[] altCoords, float[] aColor)
     {
-        this(altCoords);
+        if (altCoords.length % COORDS_PER_VERTEX == 0)
+            coords = altCoords;
         color = aColor;
+        verticesPerSquare = 6;
+        init();
     }
 
     public Square(float[] altCoords)

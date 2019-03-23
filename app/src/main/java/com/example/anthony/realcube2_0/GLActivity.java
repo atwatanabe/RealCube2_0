@@ -134,7 +134,7 @@ public class GLActivity extends Activity {
                 float[] rotationMatrix = new float[16];
                 int index = 4;
                 //Log.i("sensor vector size", new Integer(e.values.length).toString());
-                e.values[index] = -e.values[index];
+                //e.values[index] = -e.values[index];
                 sm.getRotationMatrixFromVector(rotationMatrix, e.values);
                 renderer.setRotationMatrix(rotationMatrix);
                 requestRender();

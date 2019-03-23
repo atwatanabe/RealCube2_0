@@ -19,6 +19,14 @@ public abstract class Shape
     protected int vertexCount;
     protected int vertexStride; //= coords.length * COORDS_PER_VERTEX;
 
+    public float[] getColor() {
+        return color;
+    }
+
+    public void setColor(float[] color) {
+        this.color = color;
+    }
+
     protected float[] color;
 
     public static final String vertexShaderCode =
