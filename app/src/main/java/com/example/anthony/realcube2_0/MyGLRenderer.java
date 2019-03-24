@@ -85,11 +85,14 @@ public class MyGLRenderer implements GLSurfaceView.Renderer
     @Override
     public void onSurfaceCreated(GL10 unused, EGLConfig config)
     {
-        GLES20.glClearColor(0f, 0f, 0f, 1f);
-        shapes = new ArrayList<Shape>();
-        //shapes.add(new Triangle());
 
-        iter = shapes.iterator();
+        GLES20.glDepthRangef(0f, 1f);
+        GLES20.glEnable(GLES20.GL_DEPTH_TEST);
+        GLES20.glDepthFunc(GLES20.GL_LEQUAL);
+        GLES20.glDepthMask(true);
+
+        GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1f);
+        GLES20.glClearDepthf(1.0f);
 
         int vertexShader = loadShader(GLES20.GL_VERTEX_SHADER, Shape.vertexShaderCode);
         int fragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER, Shape.fragmentShaderCode);
@@ -165,7 +168,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer
 //        Matrix.setRotateM(rotationMatrix, 0, angle, 0, 0, -1f);
         //Matrix.setRotateM(rotationMatrix, 0, -mAngle, 0, 0, -1f);
 
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
 
         Matrix.setLookAtM(viewMatrix, 0, 0, 0, -3, 0f, 0f, 0f, 0f, 1f, 0f);
         Matrix.multiplyMM(vPMatrix, 0, projectionMatrix, 0, viewMatrix, 0);

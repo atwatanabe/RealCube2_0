@@ -296,6 +296,9 @@ public class Cuboid extends TwistyPuzzle
                 pieces.add(drEdge);
             }
         }
+
+        
+
     }
 
 }
