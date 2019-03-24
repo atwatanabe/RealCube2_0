@@ -167,9 +167,12 @@ public class Cuboid extends TwistyPuzzle
         pieces.add(drfPiece);
         pieces.add(drbPiece);
 
+        boolean isWide = width > 2;
+        boolean isTall = height > 2;
+        boolean isDeep = depth > 2;
 
         //create edge pieces
-        if (width > 2)
+        if (isWide)
         {
             float[][] uf = new float[width - 2][edgeStride];    float[][] ufColors = new float[2][colorStride];
             float[][] ub = new float[width - 2][edgeStride];    float[][] ubColors = new float[2][colorStride];
@@ -211,7 +214,7 @@ public class Cuboid extends TwistyPuzzle
             }
         }
 
-        if (height > 2)
+        if (isTall)
         {
             float[][] lf = new float[height - 2][edgeStride];   float[][] lfColors = new float[2][colorStride];
             float[][] lb = new float[height - 2][edgeStride];   float[][] lbColors = new float[2][colorStride];
@@ -255,7 +258,7 @@ public class Cuboid extends TwistyPuzzle
 
         }
 
-        if (depth > 2)
+        if (isDeep)
         {
             float[][] ul = new float[depth - 2][edgeStride];    float[][] ulColors = new float[2][colorStride];
             float[][] ur = new float[depth - 2][edgeStride];    float[][] urColors = new float[2][colorStride];
@@ -297,7 +300,76 @@ public class Cuboid extends TwistyPuzzle
             }
         }
 
-        
+        //create centers
+
+        //up and down
+        if (isWide && isDeep)
+        {
+            for (int x = 1; x < width - 1; ++x)
+            {
+                for (int z = 1; z < depth - 1; ++z)
+                {
+                    float[] u = new float[squareStride];
+                    float[] d = new float[squareStride];
+
+                    int index = x * depth * squareStride + z * squareStride;
+                    System.arraycopy(up, index, u, 0, squareStride);
+                    System.arraycopy(down, index, d, 0, squareStride);
+
+                    Piece uCenter = new PieceCuboidCenter(u, colors[0]);
+                    Piece dCenter = new PieceCuboidCenter(d, colors[1]);
+
+                    pieces.add(uCenter);
+                    pieces.add(dCenter);
+                }
+            }
+        }
+
+        //left and right
+        if (isTall && isDeep)
+        {
+            for (int y = 1; y < height - 1; ++y)
+            {
+                for (int z = 1; z < depth - 1; ++z)
+                {
+                    float[] l = new float[squareStride];
+                    float[] r = new float[squareStride];
+
+                    int index = z * height * squareStride + y * squareStride;
+                    System.arraycopy(left, index, l, 0, squareStride);
+                    System.arraycopy(right, index, r, 0, squareStride);
+
+                    Piece lCenter = new PieceCuboidCenter(l, colors[2]);
+                    Piece rCenter = new PieceCuboidCenter(r, colors[3]);
+
+                    pieces.add(lCenter);
+                    pieces.add(rCenter);
+                }
+            }
+        }
+
+        //front and back
+        if (isWide && isTall)
+        {
+            for (int x = 1; x < width - 1; ++x)
+            {
+                for (int y = 1; y < height; ++y)
+                {
+                    float[] f = new float[squareStride];
+                    float[] b = new float[squareStride];
+
+                    int index = x * height * squareStride + y * squareStride;
+                    System.arraycopy(front, index, f, 0, squareStride);
+                    System.arraycopy(back, index, b, 0, squareStride);
+
+                    Piece fCenter = new PieceCuboidCenter(f, colors[4]);
+                    Piece bCenter = new PieceCuboidCenter(b, colors[5]);
+
+                    pieces.add(fCenter);
+                    pieces.add(bCenter);
+                }
+            }
+        }
 
     }
 

@@ -103,7 +103,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer
         vertexStride = Shape.COORDS_PER_VERTEX * 4;
 
         int x = 3;
-        int y = 4;
+        int y = 3;
         int z = 5;
         float sideLength = 0.3f;
         float spacing = 0.02f;
