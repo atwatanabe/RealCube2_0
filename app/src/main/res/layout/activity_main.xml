@@ -5,32 +5,64 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.anthony.realcube2_0.MainActivity"
-    android:gravity="center"
+    android:orientation="vertical"
 
     >
 
-    <Button
+
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/cube3x3"
-        android:id="@+id/button3x3"
-    />
+        >
 
-    <Button
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/cube3x3"
+            android:id="@+id/button3x3"
+            />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/cube4x4"
+            android:id="@+id/button4x4"
+            />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/title_activity_settings"
+            android:id="@+id/settingsButton"/>
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/cube4x4"
-        android:id="@+id/button4x4"
-    />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/title_activity_settings"
-        android:id="@+id/settingsButton"/>
+        android:layout_height="wrap_content">
 
 
+        <NumberPicker
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/npX"></NumberPicker>
 
+        <NumberPicker
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/npY"></NumberPicker>
+
+        <NumberPicker
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/npZ"></NumberPicker>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/custom"
+            android:id="@+id/cubeCustom"/>
+
+    </LinearLayout>
 
 
 

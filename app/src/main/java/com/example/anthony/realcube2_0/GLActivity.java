@@ -27,7 +27,7 @@ public class GLActivity extends Activity {
 
     //private List<UIButton> buttons;
 
-
+    private int[] dimensions;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -39,6 +39,13 @@ public class GLActivity extends Activity {
 
         //buttons = new ArrayList<UIButton>();
         //loadUISettings();
+        Bundle b = getIntent().getExtras();
+        if (b != null) {
+            int[] temp = b.getIntArray("cubeDimensions");
+            dimensions = temp;
+        }
+        else
+            dimensions = new int[] {3, 3, 3};
 
         glView = new MyGLSurfaceView(this);
         setContentView(glView);
@@ -116,7 +123,7 @@ public class GLActivity extends Activity {
             super(context);
 
             setEGLContextClientVersion(2);
-            renderer = new MyGLRenderer(getContext());
+            renderer = new MyGLRenderer(getContext(), dimensions);
             setRenderer(renderer);
             setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
             sm = (SensorManager) getSystemService(SENSOR_SERVICE);

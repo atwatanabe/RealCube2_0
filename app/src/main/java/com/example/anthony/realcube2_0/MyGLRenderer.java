@@ -33,6 +33,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer
     private final float[] projectionMatrix = new float[16];
     private final float[] viewMatrix = new float[16];
 
+    private int[] dimensions;
+
     private float[] rotationMatrix = new float[16];
 
     private Sensor rvs;
@@ -45,6 +47,13 @@ public class MyGLRenderer implements GLSurfaceView.Renderer
     public MyGLRenderer(Context c)
     {
         context = c;
+        dimensions = new int[] {3, 3, 3};
+    }
+
+    public MyGLRenderer(Context c, int[] dimens)
+    {
+        context = c;
+        dimensions = dimens;
     }
 
     public void setRotationMatrix(float[] rotationMatrix)
@@ -102,11 +111,11 @@ public class MyGLRenderer implements GLSurfaceView.Renderer
         GLES20.glLinkProgram(mProgram);
         vertexStride = Shape.COORDS_PER_VERTEX * 4;
 
-        int x = 3;
-        int y = 3;
-        int z = 5;
-        float sideLength = 0.3f;
-        float spacing = 0.02f;
+        int x = dimensions[0];
+        int y = dimensions[1];
+        int z = dimensions[2];
+        float sideLength = 0.5f;
+        float spacing = 0.1f;
         //vertexCount = x * y * z * 6;
 
         float alpha = 1f;
@@ -119,7 +128,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer
 
         colors = new float[][] {white, yellow, red, orange, blue, green};
 
-        puzzle = new Cuboid(x, y, z, 0.5f, 0.1f, colors);
+        puzzle = new Cuboid(x, y, z, sideLength, spacing, colors);
         vertexCount = puzzle.getNumCoords() / Square.COORDS_PER_VERTEX;
         float[] coords = puzzle.getCoords();
 
