@@ -3,6 +3,7 @@ package com.example.anthony.realcube2_0;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -12,6 +13,11 @@ import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewGroupOverlay;
+import android.widget.Button;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,8 +54,25 @@ public class GLActivity extends Activity {
             dimensions = new int[] {3, 3, 3};
 
         glView = new MyGLSurfaceView(this);
+//        setContentView(R.layout.default_ui);
         setContentView(glView);
+//        addContentView(glView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         glView.registerListener();
+
+        Button testButton = new Button(this);
+        testButton.setText("test button");
+        testButton.setBackgroundColor(0x80ffffff);
+        testButton.setTextColor(Color.WHITE);
+        testButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i("testButton", "test button clicked");
+            }
+        });
+
+        //View ui = findViewById(R.id.default_ui);
+        addContentView(testButton, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        //addContentView(ui, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
     }
 
     private void loadUISettings()

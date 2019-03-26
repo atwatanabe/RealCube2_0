@@ -1,29 +1,20 @@
 package com.example.anthony.realcube2_0;
 
-import android.app.Activity;
 import android.content.Context;
 import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
-import android.os.SystemClock;
-import android.util.Log;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
-
-import static android.content.Context.SENSOR_SERVICE;
-import static android.opengl.GLES20.GL_BACK;
 
 public class MyGLRenderer implements GLSurfaceView.Renderer
 {
@@ -32,6 +23,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer
     private final float[] vPMatrix = new float[16];
     private final float[] projectionMatrix = new float[16];
     private final float[] viewMatrix = new float[16];
+
+    private float eyeZ;
 
     private int[] dimensions;
 
@@ -43,17 +36,26 @@ public class MyGLRenderer implements GLSurfaceView.Renderer
     private volatile float mAngle;
     private Iterator<Shape> iter;
     private int vertexCount;
+    private float sideLength;
+    private float spacing;
 
     public MyGLRenderer(Context c)
     {
         context = c;
         dimensions = new int[] {3, 3, 3};
+        eyeZ = -3f;
+        sideLength = 0.5f;
+        spacing = 0.1f;
     }
 
     public MyGLRenderer(Context c, int[] dimens)
     {
         context = c;
         dimensions = dimens;
+        int max = Math.max(dimensions[0], Math.max(dimensions[1], dimensions[2]));
+        sideLength = 0.5f;
+        spacing = 0.1f;
+        eyeZ = -max * (sideLength + spacing) - 1.5f;
     }
 
     public void setRotationMatrix(float[] rotationMatrix)
@@ -114,8 +116,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer
         int x = dimensions[0];
         int y = dimensions[1];
         int z = dimensions[2];
-        float sideLength = 0.5f;
-        float spacing = 0.1f;
+        sideLength = 0.5f;
+        spacing = 0.1f;
         //vertexCount = x * y * z * 6;
 
         float alpha = 1f;
@@ -179,7 +181,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer
 
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
 
-        Matrix.setLookAtM(viewMatrix, 0, 0, 0, -3, 0f, 0f, 0f, 0f, 1f, 0f);
+        Matrix.setLookAtM(viewMatrix, 0, 0, 0, eyeZ, 0f, 0f, 0f, 0f, 1f, 0f);
         Matrix.multiplyMM(vPMatrix, 0, projectionMatrix, 0, viewMatrix, 0);
         Matrix.multiplyMM(temp, 0, vPMatrix, 0, rotationMatrix, 0);
 
