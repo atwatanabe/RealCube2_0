@@ -6,6 +6,7 @@ import android.hardware.SensorManager;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
+import android.os.SystemClock;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -18,8 +19,6 @@ import javax.microedition.khronos.opengles.GL10;
 
 public class MyGLRenderer implements GLSurfaceView.Renderer
 {
-    private List<Shape> shapes;
-
     private final float[] vPMatrix = new float[16];
     private final float[] projectionMatrix = new float[16];
     private final float[] viewMatrix = new float[16];
@@ -55,7 +54,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer
         int max = Math.max(dimensions[0], Math.max(dimensions[1], dimensions[2]));
         sideLength = 0.5f;
         spacing = 0.1f;
-        eyeZ = -max * (sideLength + spacing) - 1.5f;
+        eyeZ = -max * (sideLength + spacing) * 1.5f;
     }
 
     public void setRotationMatrix(float[] rotationMatrix)
@@ -71,9 +70,6 @@ public class MyGLRenderer implements GLSurfaceView.Renderer
         this.mAngle = mAngle;
     }
 
-    private Triangle tri;
-    private Square squ;
-
     private int vPMatrixHandle;
     private int positionHandle;
     private int colorHandle;
@@ -82,6 +78,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer
     private FloatBuffer vertexBuffer;
     private float[][] colors;
     private TwistyPuzzle puzzle;
+    private boolean isActive;
 
     public static int loadShader(int type, String shaderCode)
     {
@@ -96,7 +93,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer
     @Override
     public void onSurfaceCreated(GL10 unused, EGLConfig config)
     {
-
+        isActive = false;
         GLES20.glDepthRangef(0f, 1f);
         GLES20.glEnable(GLES20.GL_DEPTH_TEST);
         GLES20.glDepthFunc(GLES20.GL_LEQUAL);
@@ -134,50 +131,32 @@ public class MyGLRenderer implements GLSurfaceView.Renderer
         vertexCount = puzzle.getNumCoords() / Square.COORDS_PER_VERTEX;
         float[] coords = puzzle.getCoords();
 
-//        float unit = sideLength + spacing;
-//        float halfUnit = unit / 2f;
-//        float widthRadius = x * halfUnit;
-//        float heightRadius = y * halfUnit;
-//        float depthRadius = z * halfUnit;
-//
-//        float[] coords0 = Square.generateFace(x, y, sideLength, spacing, Cube3x3x3.Side.Front, depthRadius);
-//        float[] coords1 = Square.generateFace(x, y, sideLength, spacing, Cube3x3x3.Side.Back, depthRadius);
-//        float[] coords2 = Square.generateFace(x, z, sideLength, spacing, Cube3x3x3.Side.Up, heightRadius);
-//        float[] coords3 = Square.generateFace(z, y, sideLength, spacing, Cube3x3x3.Side.Left, widthRadius);
-//        float[] coords4 = Square.generateFace(z, y, sideLength, spacing, Cube3x3x3.Side.Right, widthRadius);
-//        float[] coords5 = Square.generateFace(x, z, sideLength, spacing, Cube3x3x3.Side.Down, heightRadius);
-//
-//        float[] coords = new float[coords0.length + coords1.length + coords2.length + coords3.length + coords4.length + coords5.length];
-//        System.arraycopy(coords0, 0, coords, 0, coords0.length);
-//        System.arraycopy(coords1, 0, coords, coords0.length, coords1.length);
-//        System.arraycopy(coords2, 0, coords, coords0.length + coords1.length, coords2.length);
-//        System.arraycopy(coords3, 0, coords, coords0.length + coords1.length + coords2.length, coords3.length);
-//        System.arraycopy(coords4, 0, coords, coords0.length + coords1.length + coords2.length + coords3.length, coords4.length);
-//        System.arraycopy(coords5, 0, coords, coords0.length + coords1.length + coords2.length + coords3.length + coords4.length, coords5.length);
-
-//        vertexCount = coords.length / Square.COORDS_PER_VERTEX;
-
-//        float[] coords = p1.getCoords();
         ByteBuffer bb = ByteBuffer.allocateDirect(coords.length * 4);
         bb.order(ByteOrder.nativeOrder());
         vertexBuffer = bb.asFloatBuffer();
         vertexBuffer.put(coords);
         vertexBuffer.position(0);
 
-
-        //vertexBuffer = Square.generateFace(3, 3, 0.5f, 0.1f, Cube3x3x3.Side.Front, 0f);
-
         //GLES20.glCullFace(GL_BACK);
+    }
+
+    public void setIsActive(boolean b)
+    {
+        isActive = b;
     }
 
     @Override
     public void onDrawFrame(GL10 unused)
     {
         float[] temp = new float[16];
-//        long time = SystemClock.uptimeMillis() % 4000L;
-//        float angle = 0.090f * ((int) time);
-//        Matrix.setRotateM(rotationMatrix, 0, angle, 0, 0, -1f);
-        //Matrix.setRotateM(rotationMatrix, 0, -mAngle, 0, 0, -1f);
+        if (isActive)
+        {
+            long time = SystemClock.uptimeMillis() % 4000L;
+            float angle = 0.090f * ((int) time);
+            Matrix.rotateM(rotationMatrix, 0, angle, 0, 0, -1f);
+            //Matrix.setRotateM(rotationMatrix, 0, -mAngle, 0, 0, -1f);
+        }
+
 
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
 
@@ -185,33 +164,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer
         Matrix.multiplyMM(vPMatrix, 0, projectionMatrix, 0, viewMatrix, 0);
         Matrix.multiplyMM(temp, 0, vPMatrix, 0, rotationMatrix, 0);
 
-        //tri.draw(temp);
-        //squ.draw(temp);
-
         puzzle.draw(temp);
-//        float[] color = {1f, 0f, 0f, 1f};
-//        vPMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uMVPMatrix");
-//        GLES20.glUniformMatrix4fv(vPMatrixHandle, 1, false, temp, 0);
-//        GLES20.glUseProgram(mProgram);
-
-//        positionHandle = GLES20.glGetAttribLocation(mProgram, "vPosition");
-//        GLES20.glEnableVertexAttribArray(positionHandle);
-//        GLES20.glVertexAttribPointer(positionHandle, Shape.COORDS_PER_VERTEX, GLES20.GL_FLOAT, false, vertexStride, vertexBuffer);
-//        colorHandle = GLES20.glGetUniformLocation(mProgram, "vColor");
-//        GLES20.glUniform4fv(colorHandle, 1, color, 0);
-//        GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, vertexCount);
-//        GLES20.glDisableVertexAttribArray(positionHandle);
-
-//        for (Shape s : shapes)
-//        {
-//            s.draw(temp);
-//        }
-
-
-//        while (iter.hasNext())
-//        {
-//            iter.next().draw(temp);
-//        }
     }
 
     @Override

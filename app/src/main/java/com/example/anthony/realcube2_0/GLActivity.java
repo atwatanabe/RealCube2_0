@@ -40,11 +40,6 @@ public class GLActivity extends Activity {
     {
         super.onCreate(savedInstanceState);
 
-//        Intent intent = getIntent();
-//        cubeDimensions = intent.getStringExtra("cubeDimensions");
-
-        //buttons = new ArrayList<UIButton>();
-        //loadUISettings();
         Bundle b = getIntent().getExtras();
         if (b != null) {
             int[] temp = b.getIntArray("cubeDimensions");
@@ -63,10 +58,24 @@ public class GLActivity extends Activity {
         testButton.setText("test button");
         testButton.setBackgroundColor(0x80ffffff);
         testButton.setTextColor(Color.WHITE);
-        testButton.setOnClickListener(new View.OnClickListener() {
+//        testButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Log.i("testButton", "test button clicked");
+//            }
+//        });
+
+        testButton.setOnTouchListener(new View.OnTouchListener()
+        {
             @Override
-            public void onClick(View view) {
-                Log.i("testButton", "test button clicked");
+            public boolean onTouch(View v, MotionEvent e)
+            {
+                if (e.getAction() == MotionEvent.ACTION_DOWN)
+                    glView.getRenderer().setIsActive(true);
+                else if (e.getAction() == MotionEvent.ACTION_UP)
+                    glView.getRenderer().setIsActive(false);
+
+                return false;
             }
         });
 
@@ -130,6 +139,11 @@ public class GLActivity extends Activity {
 //
 //            return true;
 //        }
+
+        public MyGLRenderer getRenderer()
+        {
+            return renderer;
+        }
 
         public void unregisterListener()
         {
