@@ -6,13 +6,11 @@ import android.hardware.SensorManager;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
-import android.os.SystemClock;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.Iterator;
-import java.util.List;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -23,11 +21,13 @@ public class MyGLRenderer implements GLSurfaceView.Renderer
     private final float[] projectionMatrix = new float[16];
     private final float[] viewMatrix = new float[16];
 
+    private float[] rotationVector = new float[4];
+
     private float eyeZ;
 
     private int[] dimensions;
 
-    private float[] rotationMatrix = new float[16];
+    private float[] rvsRotationMatrix = new float[16];
 
     private Sensor rvs;
     private SensorManager sm;
@@ -37,6 +37,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer
     private int vertexCount;
     private float sideLength;
     private float spacing;
+    private float angle;
+    private float[] rotationMatrix = new float[16];
 
     public MyGLRenderer(Context c)
     {
@@ -57,9 +59,9 @@ public class MyGLRenderer implements GLSurfaceView.Renderer
         eyeZ = -max * (sideLength + spacing) * 1.5f;
     }
 
-    public void setRotationMatrix(float[] rotationMatrix)
+    public void setRvsRotationMatrix(float[] rvsRotationMatrix)
     {
-        this.rotationMatrix = rotationMatrix;
+        this.rvsRotationMatrix = rvsRotationMatrix;
     }
 
     public float getAngle() {
@@ -90,10 +92,17 @@ public class MyGLRenderer implements GLSurfaceView.Renderer
         return shader;
     }
 
+    public void setRotationVector(float[] rotationVector) {
+        System.arraycopy(rotationVector, 0, this.rotationVector, 0, this.rotationVector.length);
+    }
+
     @Override
     public void onSurfaceCreated(GL10 unused, EGLConfig config)
     {
+        angle = 0;
         isActive = false;
+        Matrix.setIdentityM(rotationMatrix, 0);
+
         GLES20.glDepthRangef(0f, 1f);
         GLES20.glEnable(GLES20.GL_DEPTH_TEST);
         GLES20.glDepthFunc(GLES20.GL_LEQUAL);
@@ -148,21 +157,26 @@ public class MyGLRenderer implements GLSurfaceView.Renderer
     @Override
     public void onDrawFrame(GL10 unused)
     {
-        float[] temp = new float[16];
-        if (isActive)
-        {
-            long time = SystemClock.uptimeMillis() % 4000L;
-            float angle = 0.090f * ((int) time);
-            Matrix.rotateM(rotationMatrix, 0, angle, 0, 0, -1f);
-            //Matrix.setRotateM(rotationMatrix, 0, -mAngle, 0, 0, -1f);
-        }
-
 
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
 
+        float[] temp = new float[16];
+
+        if (isActive)
+        {
+            if (angle >= 360)
+                angle = 0;
+            angle += 1;
+        }
+
+        Matrix.setRotateM(rotationMatrix, 0, angle, 0, 0, 1f);
+//        Matrix.setRotateM(rotationMatrix, 0, angle, rotationVector[0], rotationVector[1], rotationVector[2]);
+//        Matrix.rotateM(rotationMatrix, 0, angle, 0, 0, -1f);
+
         Matrix.setLookAtM(viewMatrix, 0, 0, 0, eyeZ, 0f, 0f, 0f, 0f, 1f, 0f);
         Matrix.multiplyMM(vPMatrix, 0, projectionMatrix, 0, viewMatrix, 0);
-        Matrix.multiplyMM(temp, 0, vPMatrix, 0, rotationMatrix, 0);
+        Matrix.multiplyMM(rotationMatrix, 0, vPMatrix, 0, rotationMatrix, 0);
+        Matrix.multiplyMM(temp, 0, rotationMatrix, 0, rvsRotationMatrix, 0);
 
         puzzle.draw(temp);
     }

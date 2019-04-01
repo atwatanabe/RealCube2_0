@@ -2,25 +2,17 @@ package com.example.anthony.realcube2_0;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewGroupOverlay;
 import android.widget.Button;
-import android.widget.Toast;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class GLActivity extends Activity {
 
@@ -179,8 +171,10 @@ public class GLActivity extends Activity {
                 int index = 4;
                 //Log.i("sensor vector size", new Integer(e.values.length).toString());
                 //e.values[index] = -e.values[index];
+                renderer.setRotationVector(e.values);
+
                 sm.getRotationMatrixFromVector(rotationMatrix, e.values);
-                renderer.setRotationMatrix(rotationMatrix);
+                renderer.setRvsRotationMatrix(rotationMatrix);
                 requestRender();
             }
         }
