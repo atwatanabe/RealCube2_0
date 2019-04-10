@@ -9,8 +9,10 @@ public class Cuboid extends TwistyPuzzle
     private int depth;
     private float sideLength;   //the length of the side of one tile (since not all
                                 //sides of a cuboid are necessarily the same length
-    private float[][] colors;
     private float spacing;
+    private float[][] colors;
+
+
 
     public Cuboid(int w, int h, int d, float sl, float sp, float[][] mColors)
     {
@@ -63,15 +65,18 @@ public class Cuboid extends TwistyPuzzle
         float[] back = Square.generateFace(width, height, sideLength, spacing, Cube3x3x3.Side.Back, depthRadius);
 
         int squareStride = Square.verticesPerSquare * Square.coordsPerVertex;
-        int centerStride = squareStride;
+//        int centerStride = squareStride;
         int edgeStride = 2 * squareStride;
         int cornerStride = 3 * squareStride;
 
         int colorStride = 4;
-        int centerColorLength = colorStride;
-        int edgeColorLength = 2 * colorStride;
-        int cornerColorLength = 3 * colorStride;
 
+
+        int isSortaTall = height > 1 ? 1 : 0;
+        int isSortaWide = width > 1 ? 1 : 0;
+        int isSortaDeep = depth > 1 ? 1 : 0;
+
+        int numCorners = (int) Math.pow(2, isSortaWide + isSortaTall + isSortaDeep);
 
         //the 8 corners. If any of the dimensions is 1, some of the corners will overlap for now; will optimize later
         float[] ulf = new float[cornerStride];      float[][] ulfColors = new float[3][colorStride];
@@ -167,53 +172,11 @@ public class Cuboid extends TwistyPuzzle
         pieces.add(drfPiece);
         pieces.add(drbPiece);
 
-        boolean isWide = width > 2;
         boolean isTall = height > 2;
+        boolean isWide = width > 2;
         boolean isDeep = depth > 2;
 
         //create edge pieces
-        if (isWide)
-        {
-            float[][] uf = new float[width - 2][edgeStride];    float[][] ufColors = new float[2][colorStride];
-            float[][] ub = new float[width - 2][edgeStride];    float[][] ubColors = new float[2][colorStride];
-            float[][] df = new float[width - 2][edgeStride];    float[][] dfColors = new float[2][colorStride];
-            float[][] db = new float[width - 2][edgeStride];    float[][] dbColors = new float[2][colorStride];
-
-            ufColors[0] = colors[0];
-            ufColors[1] = colors[4];
-            ubColors[0] = colors[0];
-            ubColors[1] = colors[5];
-            dfColors[0] = colors[1];
-            dfColors[1] = colors[4];
-            dbColors[0] = colors[1];
-            dbColors[1] = colors[5];
-
-            for (int x = 1; x < width - 1; ++x)
-            {
-                System.arraycopy(up, ((1 + x) * depth - 1) * squareStride, uf[x - 1], 0, squareStride);
-                System.arraycopy(front, height * x * squareStride, uf[x - 1], squareStride, squareStride);
-
-                System.arraycopy(up, depth * x * squareStride, ub[x - 1], 0, squareStride);
-                System.arraycopy(back, back.length - (1 + x) * height * squareStride, ub[x - 1], squareStride, squareStride);
-
-                System.arraycopy(down, x * depth * squareStride, df[x - 1], 0, squareStride);
-                System.arraycopy(front, ((1 + x) * height - 1) * squareStride, df[x - 1], squareStride, squareStride);
-
-                System.arraycopy(down, ((1 + x) * depth - 1) * squareStride, db[x - 1], 0, squareStride);
-                System.arraycopy(back, back.length - squareStride - x * height * squareStride, db[x - 1], squareStride, squareStride);
-
-                Piece ufEdge = new PieceCuboidEdge(uf[x - 1], ufColors);
-                Piece ubEdge = new PieceCuboidEdge(ub[x - 1], ubColors);
-                Piece dfEdge = new PieceCuboidEdge(df[x - 1], dfColors);
-                Piece dbEdge = new PieceCuboidEdge(db[x - 1], dbColors);
-
-                pieces.add(ufEdge);
-                pieces.add(ubEdge);
-                pieces.add(dfEdge);
-                pieces.add(dbEdge);
-            }
-        }
-
         if (isTall)
         {
             float[][] lf = new float[height - 2][edgeStride];   float[][] lfColors = new float[2][colorStride];
@@ -256,6 +219,48 @@ public class Cuboid extends TwistyPuzzle
             }
 
 
+        }
+
+        if (isWide)
+        {
+            float[][] uf = new float[width - 2][edgeStride];    float[][] ufColors = new float[2][colorStride];
+            float[][] ub = new float[width - 2][edgeStride];    float[][] ubColors = new float[2][colorStride];
+            float[][] df = new float[width - 2][edgeStride];    float[][] dfColors = new float[2][colorStride];
+            float[][] db = new float[width - 2][edgeStride];    float[][] dbColors = new float[2][colorStride];
+
+            ufColors[0] = colors[0];
+            ufColors[1] = colors[4];
+            ubColors[0] = colors[0];
+            ubColors[1] = colors[5];
+            dfColors[0] = colors[1];
+            dfColors[1] = colors[4];
+            dbColors[0] = colors[1];
+            dbColors[1] = colors[5];
+
+            for (int x = 1; x < width - 1; ++x)
+            {
+                System.arraycopy(up, ((1 + x) * depth - 1) * squareStride, uf[x - 1], 0, squareStride);
+                System.arraycopy(front, height * x * squareStride, uf[x - 1], squareStride, squareStride);
+
+                System.arraycopy(up, depth * x * squareStride, ub[x - 1], 0, squareStride);
+                System.arraycopy(back, back.length - (1 + x) * height * squareStride, ub[x - 1], squareStride, squareStride);
+
+                System.arraycopy(down, x * depth * squareStride, df[x - 1], 0, squareStride);
+                System.arraycopy(front, ((1 + x) * height - 1) * squareStride, df[x - 1], squareStride, squareStride);
+
+                System.arraycopy(down, ((1 + x) * depth - 1) * squareStride, db[x - 1], 0, squareStride);
+                System.arraycopy(back, back.length - squareStride - x * height * squareStride, db[x - 1], squareStride, squareStride);
+
+                Piece ufEdge = new PieceCuboidEdge(uf[x - 1], ufColors);
+                Piece ubEdge = new PieceCuboidEdge(ub[x - 1], ubColors);
+                Piece dfEdge = new PieceCuboidEdge(df[x - 1], dfColors);
+                Piece dbEdge = new PieceCuboidEdge(db[x - 1], dbColors);
+
+                pieces.add(ufEdge);
+                pieces.add(ubEdge);
+                pieces.add(dfEdge);
+                pieces.add(dbEdge);
+            }
         }
 
         if (isDeep)
@@ -370,7 +375,5 @@ public class Cuboid extends TwistyPuzzle
                 }
             }
         }
-
     }
-
 }

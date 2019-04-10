@@ -11,15 +11,10 @@ import java.nio.ShortBuffer;
 public class Square extends Shape
 {
     //private FloatBuffer vertexBuffer;
+    private short[] drawList = {0, 1, 2, 0, 2, 3};
     private ShortBuffer drawListBuffer;
 
-    static float[] squareCoords = {
-            -0.5f,  0.5f, 0.0f,
-            -0.5f, -0.5f, 0.0f,
-            0.5f, -0.5f, 0.0f,
-            0.5f,  0.5f, 0.0f
-    };
-    public static int verticesPerSquare = 6;
+    public static int verticesPerSquare = 4;
 
     public static int coordsPerVertex = 3;
 
@@ -69,8 +64,6 @@ public class Square extends Shape
                             xLeft, d, zBack,
                             xLeft, d, zFront,
                             xRight, d, zFront,
-                            xLeft, d, zBack,
-                            xRight, d, zFront,
                             xRight, d, zBack
                         };
                         System.arraycopy(vertices, 0, temp, (y * verticesPerSquare * 3) + (x * yDimen * verticesPerSquare * 3), vertices.length);
@@ -91,8 +84,6 @@ public class Square extends Shape
                         float[] vertices = {
                                 xLeft, d, zFront,
                                 xLeft, d, zBack,
-                                xRight, d, zBack,
-                                xLeft, d, zFront,
                                 xRight, d, zBack,
                                 xRight, d, zFront
                         };
@@ -115,8 +106,6 @@ public class Square extends Shape
                             d, yTop, zBack,
                             d, yBottom, zBack,
                             d, yBottom, zFront,
-                            d, yTop, zBack,
-                            d, yBottom, zFront,
                             d, yTop, zFront
                         };
                         System.arraycopy(vertices, 0, temp, (y * verticesPerSquare * 3) + (x * yDimen * verticesPerSquare * 3), vertices.length);
@@ -137,8 +126,6 @@ public class Square extends Shape
                                 d, yTop, zFront,
                                 d, yBottom, zFront,
                                 d, yBottom, zBack,
-                                d, yTop, zFront,
-                                d, yBottom, zBack,
                                 d, yTop, zBack
                         };
                         System.arraycopy(vertices, 0, temp, (y * verticesPerSquare * 3) + (x * yDimen * verticesPerSquare * 3), vertices.length);
@@ -158,8 +145,6 @@ public class Square extends Shape
                         float[] vertices = {
                                 xLeft, yTop, d,
                                 xLeft, yBottom, d,
-                                xRight, yBottom, d,
-                                xLeft, yTop, d,
                                 xRight, yBottom, d,
                                 xRight, yTop, d
                         };
@@ -182,8 +167,6 @@ public class Square extends Shape
                                 xLeft, yTop, d,
                                 xLeft, yBottom, d,
                                 xRight, yBottom, d,
-                                xLeft, yTop, d,
-                                xRight, yBottom, d,
                                 xRight, yTop, d
                         };
                         System.arraycopy(vertices, 0, temp, (y * verticesPerSquare * 3) + (x * yDimen * verticesPerSquare * 3), vertices.length);
@@ -197,15 +180,6 @@ public class Square extends Shape
                 break;
         }
 
-        for (int i = 0; i < numSquares; i += verticesPerSquare * coordsPerVertex)
-        {
-
-        }
-
-//        result.put(temp);
-//        result.position(0);
-//        return result;
-
 
         return temp;
     }
@@ -215,7 +189,6 @@ public class Square extends Shape
         if (altCoords.length % COORDS_PER_VERTEX == 0)
             coords = altCoords;
         color = aColor;
-        verticesPerSquare = 6;
         init();
     }
 
@@ -233,14 +206,11 @@ public class Square extends Shape
                     -0.5f, 0.5f, 0.0f,
                     -0.5f, -0.5f, 0.0f,
                     0.5f, -0.5f, 0.0f,
-                    -0.5f, 0.5f, 0.0f,
-                    0.5f, -0.5f, 0.0f,
                     0.5f, 0.5f, 0.0f
             };
         }
 
         color = new float[] {1f, 0f, 0f, 1.0f};
-        verticesPerSquare = 6;
         init();
     }
 
@@ -252,27 +222,30 @@ public class Square extends Shape
             -0.5f, 0.5f, 0.0f,
             -0.5f, -0.5f, 0.0f,
             0.5f, -0.5f, 0.0f,
-            -0.5f, 0.5f, 0.0f,
-            0.5f, -0.5f, 0.0f,
             0.5f, 0.5f, 0.0f
         };
 
         vertexStride = COORDS_PER_VERTEX * 4;
 
-        verticesPerSquare = 6;
         color = new float[] {1f, 0f, 0f, 1.0f};
         init();
     }
 
     private void init()
     {
-        vertexCount = 6;
         ByteBuffer bb = ByteBuffer.allocateDirect(coords.length * 4);
         bb.order(ByteOrder.nativeOrder());
 
         vertexBuffer = bb.asFloatBuffer();
         vertexBuffer.put(coords);
         vertexBuffer.position(0);
+
+        ByteBuffer dlb = ByteBuffer.allocateDirect(drawList.length * 2);
+        dlb.order(ByteOrder.nativeOrder());
+
+        drawListBuffer = dlb.asShortBuffer();
+        drawListBuffer.put(drawList);
+        drawListBuffer.position(0);
 
         int vertexShader = MyGLRenderer.loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
         int fragmentShader = MyGLRenderer.loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
@@ -301,7 +274,8 @@ public class Square extends Shape
         GLES20.glVertexAttribPointer(positionHandle, COORDS_PER_VERTEX, GLES20.GL_FLOAT, false, vertexStride, vertexBuffer);
         colorHandle = GLES20.glGetUniformLocation(mProgram, "vColor");
         GLES20.glUniform4fv(colorHandle, 1, color, 0);
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, vertexCount);
+//        GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, vertexCount);
+        GLES20.glDrawElements(GLES20.GL_TRIANGLES, drawList.length, GLES20.GL_UNSIGNED_SHORT, drawListBuffer);
         GLES20.glDisableVertexAttribArray(positionHandle);
     }
 
