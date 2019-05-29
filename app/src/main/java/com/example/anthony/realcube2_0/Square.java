@@ -19,7 +19,7 @@ public class Square extends Shape
     public static int coordsPerVertex = 3;
 
     /*
-        Returns a FloatBuffer that contains the coordinates for a whole face
+        Returns a float array that contains the coordinates for a whole face
         @param xDimen       the number of pieces along the "width" of the face.
         @param yDimen       the number of pieces along the "height" of the face.
         @param sideLength   the length of the sides of each piece's colored part.
@@ -196,8 +196,6 @@ public class Square extends Shape
     {
         if (altCoords.length % (COORDS_PER_VERTEX) == 0)
         {
-//            coords = new float[altCoords.length];
-//            System.arraycopy(altCoords, 0, coords, 0, coords.length);
             coords = altCoords;
         }
         else
@@ -254,12 +252,6 @@ public class Square extends Shape
         GLES20.glAttachShader(mProgram, vertexShader);
         GLES20.glAttachShader(mProgram, fragmentShader);
         GLES20.glLinkProgram(mProgram);
-
-//        ByteBuffer dlb = ByteBuffer.allocateDirect(drawOrder.length * 2);
-//        dlb.order(ByteOrder.nativeOrder());
-//        drawListBuffer = dlb.asShortBuffer();
-//        drawListBuffer.put(drawOrder);
-//        drawListBuffer.position(0);
 
     }
 

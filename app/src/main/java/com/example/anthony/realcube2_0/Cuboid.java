@@ -1,6 +1,8 @@
 package com.example.anthony.realcube2_0;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Cuboid extends TwistyPuzzle
 {
@@ -12,6 +14,16 @@ public class Cuboid extends TwistyPuzzle
     private float spacing;
     private float[][] colors;
 
+    private Piece[] corners;
+    private Piece[][] xEdges;
+    private Piece[][] yEdges;
+    private Piece[][] zEdges;
+    private Piece[][] frontCenters;
+    private Piece[][] backCenters;
+    private Piece[][] leftCenters;
+    private Piece[][] rightCenters;
+    private Piece[][] upCenters;
+    private Piece[][] downCenters;
 
 
     public Cuboid(int w, int h, int d, float sl, float sp, float[][] mColors)
@@ -72,11 +84,11 @@ public class Cuboid extends TwistyPuzzle
         int colorStride = 4;
 
 
-        int isSortaTall = height > 1 ? 1 : 0;
-        int isSortaWide = width > 1 ? 1 : 0;
-        int isSortaDeep = depth > 1 ? 1 : 0;
-
-        int numCorners = (int) Math.pow(2, isSortaWide + isSortaTall + isSortaDeep);
+//        int isSortaTall = height > 1 ? 1 : 0;
+//        int isSortaWide = width > 1 ? 1 : 0;
+//        int isSortaDeep = depth > 1 ? 1 : 0;
+//
+//        int numCorners = (int) Math.pow(2, isSortaWide + isSortaTall + isSortaDeep);
 
         //the 8 corners. If any of the dimensions is 1, some of the corners will overlap for now; will optimize later
         float[] ulf = new float[cornerStride];      float[][] ulfColors = new float[3][colorStride];
@@ -163,14 +175,26 @@ public class Cuboid extends TwistyPuzzle
         Piece drfPiece = new PieceCuboidCorner(drf, drfColors);
         Piece drbPiece = new PieceCuboidCorner(drb, drbColors);
 
-        pieces.add(ulfPiece);
-        pieces.add(ulbPiece);
-        pieces.add(urfPiece);
-        pieces.add(urbPiece);
-        pieces.add(dlfPiece);
-        pieces.add(dlbPiece);
-        pieces.add(drfPiece);
-        pieces.add(drbPiece);
+//        pieces.add(ulfPiece);
+//        pieces.add(ulbPiece);
+//        pieces.add(urfPiece);
+//        pieces.add(urbPiece);
+//        pieces.add(dlfPiece);
+//        pieces.add(dlbPiece);
+//        pieces.add(drfPiece);
+//        pieces.add(drbPiece);
+
+        corners = new PieceCuboidCorner[8];
+        corners[0] = ulfPiece;
+        corners[1] = ulbPiece;
+        corners[2] = urfPiece;
+        corners[3] = urbPiece;
+        corners[4] = dlfPiece;
+        corners[5] = dlbPiece;
+        corners[6] = drfPiece;
+        corners[7] = drbPiece;
+
+        pieces.addAll(Arrays.asList(corners));
 
         boolean isTall = height > 2;
         boolean isWide = width > 2;
@@ -192,6 +216,8 @@ public class Cuboid extends TwistyPuzzle
             rfColors[1] = colors[4];
             rbColors[0] = colors[3];
             rbColors[1] = colors[5];
+
+            yEdges = new PieceCuboidEdge[4][height - 2];
 
             for (int y = 1; y < height - 1; ++y)
             {
@@ -216,8 +242,18 @@ public class Cuboid extends TwistyPuzzle
                 pieces.add(lbEdge);
                 pieces.add(rfEdge);
                 pieces.add(rbEdge);
+
+                yEdges[0][y - 1] = lfEdge;
+                yEdges[1][y - 1] = lbEdge;
+                yEdges[2][y - 1] = rbEdge;
+                yEdges[3][y - 1] = rfEdge;
+
             }
 
+//            for (int i = 0; i < yEdges.length; ++i)
+//            {
+//                pieces.addAll(Arrays.asList(yEdges[i]));
+//            }
 
         }
 
@@ -236,6 +272,8 @@ public class Cuboid extends TwistyPuzzle
             dfColors[1] = colors[4];
             dbColors[0] = colors[1];
             dbColors[1] = colors[5];
+
+            xEdges = new PieceCuboidEdge[4][width - 2];
 
             for (int x = 1; x < width - 1; ++x)
             {
@@ -260,7 +298,17 @@ public class Cuboid extends TwistyPuzzle
                 pieces.add(ubEdge);
                 pieces.add(dfEdge);
                 pieces.add(dbEdge);
+
+                xEdges[0][x - 1] = ufEdge;
+                xEdges[1][x - 1] = ubEdge;
+                xEdges[2][x - 1] = dbEdge;
+                xEdges[3][x - 1] = dfEdge;
             }
+
+//            for (int i = 0; i < xEdges.length; ++i)
+//            {
+//                pieces.addAll(Arrays.asList(xEdges[i]));
+//            }
         }
 
         if (isDeep)
@@ -278,6 +326,8 @@ public class Cuboid extends TwistyPuzzle
             dlColors[1] = colors[2];
             drColors[0] = colors[1];
             drColors[1] = colors[3];
+
+            zEdges = new PieceCuboidEdge[4][depth - 2];
 
             for (int z = 1; z < depth - 1; ++z)
             {
@@ -302,7 +352,17 @@ public class Cuboid extends TwistyPuzzle
                 pieces.add(urEdge);
                 pieces.add(dlEdge);
                 pieces.add(drEdge);
+
+                zEdges[0][z - 1] = ulEdge;
+                zEdges[1][z - 1] = urEdge;
+                zEdges[2][z - 1] = drEdge;
+                zEdges[3][z - 1] = dlEdge;
             }
+
+//            for (int i = 0; i < depth - 2; ++i)
+//            {
+//                pieces.addAll(Arrays.asList(zEdges[i]));
+//            }
         }
 
         //create centers
@@ -310,6 +370,9 @@ public class Cuboid extends TwistyPuzzle
         //up and down
         if (isWide && isDeep)
         {
+            upCenters = new PieceCuboidCenter[width - 2][depth - 2];
+            downCenters = new PieceCuboidCenter[width - 2][depth - 2];
+
             for (int x = 1; x < width - 1; ++x)
             {
                 for (int z = 1; z < depth - 1; ++z)
@@ -326,6 +389,9 @@ public class Cuboid extends TwistyPuzzle
 
                     pieces.add(uCenter);
                     pieces.add(dCenter);
+
+                    upCenters[x - 1][z - 1] = uCenter;
+                    downCenters[x - 1][z - 1] = dCenter;
                 }
             }
         }
@@ -333,6 +399,9 @@ public class Cuboid extends TwistyPuzzle
         //left and right
         if (isTall && isDeep)
         {
+            leftCenters = new PieceCuboidCenter[height - 2][depth - 2];
+            rightCenters = new PieceCuboidCenter[height - 2][depth - 2];
+
             for (int y = 1; y < height - 1; ++y)
             {
                 for (int z = 1; z < depth - 1; ++z)
@@ -349,6 +418,9 @@ public class Cuboid extends TwistyPuzzle
 
                     pieces.add(lCenter);
                     pieces.add(rCenter);
+
+                    leftCenters[y - 1][z - 1] = lCenter;
+                    rightCenters[y - 1][z - 1] = rCenter;
                 }
             }
         }
@@ -356,9 +428,12 @@ public class Cuboid extends TwistyPuzzle
         //front and back
         if (isWide && isTall)
         {
+            frontCenters = new PieceCuboidCenter[width - 2][height - 2];
+            backCenters = new PieceCuboidCenter[width - 2][height - 2];
+
             for (int x = 1; x < width - 1; ++x)
             {
-                for (int y = 1; y < height; ++y)
+                for (int y = 1; y < height - 1; ++y)
                 {
                     float[] f = new float[squareStride];
                     float[] b = new float[squareStride];
@@ -372,8 +447,21 @@ public class Cuboid extends TwistyPuzzle
 
                     pieces.add(fCenter);
                     pieces.add(bCenter);
+
+                    frontCenters[x - 1][y - 1] = fCenter;
+                    backCenters[x - 1][y - 1] = bCenter;
                 }
             }
         }
+    }
+
+
+    public List<Piece> getPiecesInSlice(int axis, int layer)
+    {
+        List<Piece> p = new ArrayList<Piece>();
+
+        
+
+        return p;
     }
 }
