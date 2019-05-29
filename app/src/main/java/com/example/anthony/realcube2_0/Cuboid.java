@@ -1,5 +1,7 @@
 package com.example.anthony.realcube2_0;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -460,7 +462,61 @@ public class Cuboid extends TwistyPuzzle
     {
         List<Piece> p = new ArrayList<Piece>();
 
-        
+        switch (axis)
+        {
+            case 0:     //up/down/y
+            {
+                if (layer == 0)
+                {
+
+                }
+                else if (layer == height - 1)
+                {
+
+                }
+                else if (layer < 0 || layer >= height)
+                {
+                    Log.i("getPieces", "invalid layer " + layer + " " + height);
+                    break;
+                }
+            }
+            case 1:     //left/right/x
+            {
+                if (layer == 0)
+                {
+
+                }
+                else if (layer == width - 1)
+                {
+
+                }
+                else if (layer < 0 || layer >= width)
+                {
+                    Log.i("getPieces", "invalid layer " + layer + " " + width);
+                    break;
+                }
+            }
+            case 2:     //front/back/z
+            {
+                if (layer == 0)
+                {
+
+                }
+                else if (layer == depth - 1)
+                {
+
+                }
+                else if (layer < 0 || layer >= depth)
+                {
+                    Log.i("getPieces", "invalid layer " + layer + " " + depth);
+                    break;
+                }
+            }
+            default:
+            {
+                Log.i("getPieces", "invalid axis number");
+            }
+        }
 
         return p;
     }
