@@ -255,6 +255,8 @@ public class Square extends Shape
 
     }
 
+
+
     public void draw(float[] mvpMatrix)
     {
         vPMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uMVPMatrix");

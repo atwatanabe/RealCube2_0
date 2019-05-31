@@ -1,5 +1,6 @@
 package com.example.anthony.realcube2_0;
 
+import android.opengl.Matrix;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -460,7 +461,7 @@ public class Cuboid extends TwistyPuzzle
 
     public List<Piece> getPiecesInSlice(int axis, int layer)
     {
-        List<Piece> p = new ArrayList<Piece>();
+        List<Piece> result = new ArrayList<Piece>();
 
         switch (axis)
         {
@@ -468,15 +469,51 @@ public class Cuboid extends TwistyPuzzle
             {
                 if (layer == 0)
                 {
-
+                    for (int i = 0; i < corners.length / 2; ++i)
+                    {
+                        result.add(corners[i]);                  //up corners
+                    }
+                    result.addAll(Arrays.asList(xEdges[0]));     //front edges
+                    result.addAll(Arrays.asList(xEdges[1]));     //back edges
+                    result.addAll(Arrays.asList(zEdges[0]));     //left edges
+                    result.addAll(Arrays.asList(zEdges[1]));     //right edges
+                    for (Piece[] p : upCenters)
+                    {
+                        result.addAll(Arrays.asList(p));        //up centers
+                    }
+                    break;
                 }
                 else if (layer == height - 1)
                 {
-
+                    for (int i = corners.length / 2; i < corners.length; ++i)
+                    {
+                        result.add(corners[i]);                 //down corners
+                    }
+                    result.addAll(Arrays.asList(xEdges[2]));    //back edges
+                    result.addAll(Arrays.asList(xEdges[3]));    //front edges
+                    result.addAll(Arrays.asList(zEdges[2]));    //right edges
+                    result.addAll(Arrays.asList(zEdges[3]));    //left edges
+                    for (Piece[] p : downCenters)
+                    {
+                        result.addAll(Arrays.asList(p));        //down centers
+                    }
+                    break;
                 }
                 else if (layer < 0 || layer >= height)
                 {
                     Log.i("getPieces", "invalid layer " + layer + " " + height);
+                    break;
+                }
+                else
+                {
+                    for (Piece[] p : yEdges)
+                    {
+                        result.add(p[layer]);                   //edges
+                    }
+                    result.addAll(Arrays.asList(frontCenters[layer]));      //front centers
+                    result.addAll(Arrays.asList(backCenters[layer]));       //back centers
+                    result.addAll(Arrays.asList(leftCenters[layer]));       //left centers
+                    result.addAll(Arrays.asList(rightCenters[layer]));      //right centers
                     break;
                 }
             }
@@ -484,16 +521,57 @@ public class Cuboid extends TwistyPuzzle
             {
                 if (layer == 0)
                 {
-
+                    result.add(corners[0]);     //ulf
+                    result.add(corners[1]);     //ulb
+                    result.add(corners[4]);     //dlf
+                    result.add(corners[5]);     //dlb
+                    result.addAll(Arrays.asList(zEdges[0]));    //up edges
+                    result.addAll(Arrays.asList(zEdges[3]));    //down edges
+                    result.addAll(Arrays.asList(yEdges[0]));    //front edges
+                    result.addAll(Arrays.asList(yEdges[1]));    //back edges
+                    for (int i = 0; i < leftCenters.length; ++i)
+                    {
+                        result.addAll(Arrays.asList(leftCenters[i]));   //left centers
+                    }
+                    break;
                 }
                 else if (layer == width - 1)
                 {
-
+                    result.add(corners[2]);     //urf
+                    result.add(corners[3]);     //urb
+                    result.add(corners[6]);     //drf
+                    result.add(corners[7]);     //drb
+                    result.addAll(Arrays.asList(zEdges[1]));    //up edges
+                    result.addAll(Arrays.asList(zEdges[2]));    //down edges
+                    result.addAll(Arrays.asList(yEdges[2]));    //front edges
+                    result.addAll(Arrays.asList(yEdges[3]));    //back edges
+                    for (int i = 0; i < rightCenters.length; ++i)
+                    {
+                        result.addAll(Arrays.asList(rightCenters[i]));  //right centers
+                    }
+                    break;
                 }
                 else if (layer < 0 || layer >= width)
                 {
                     Log.i("getPieces", "invalid layer " + layer + " " + width);
                     break;
+                }
+                else
+                {
+                    for (Piece[] p : xEdges)
+                    {
+                        result.add(p[layer]);           //edges
+                    }
+                    for (int i = 0; i < upCenters.length; ++i)
+                    {
+                        result.add(upCenters[i][layer - 1]);
+                        result.add(downCenters[i][layer - 1]);
+                    }
+                    for (int i = 0; i < frontCenters.length; ++i)
+                    {
+                        result.add(frontCenters[i][layer - 1]);
+                        result.add(backCenters[i][backCenters[i].length - (layer - 1)]);
+                    }
                 }
             }
             case 2:     //front/back/z
@@ -518,6 +596,25 @@ public class Cuboid extends TwistyPuzzle
             }
         }
 
-        return p;
+        return result;
+    }
+
+    public void setAngleTest(int ang)
+    {
+        List<Piece> temp = getPiecesInSlice(0, 0);
+        int numFloats = 0;
+        for (Piece p : temp)
+        {
+            numFloats += p.getNumCoords();
+        }
+        List<Float> buffer = new ArrayList<Float>(numFloats);
+        for (Piece p : temp)
+        {
+            for (float f : p.getCoords())
+            {
+                buffer.add(f);
+            }
+
+        }
     }
 }
