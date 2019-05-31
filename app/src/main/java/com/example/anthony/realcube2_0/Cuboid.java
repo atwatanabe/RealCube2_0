@@ -508,7 +508,7 @@ public class Cuboid extends TwistyPuzzle
                 {
                     for (Piece[] p : yEdges)
                     {
-                        result.add(p[layer]);                   //edges
+                        result.add(p[layer - 1]);                   //edges
                     }
                     result.addAll(Arrays.asList(frontCenters[layer]));      //front centers
                     result.addAll(Arrays.asList(backCenters[layer]));       //back centers
@@ -560,7 +560,7 @@ public class Cuboid extends TwistyPuzzle
                 {
                     for (Piece[] p : xEdges)
                     {
-                        result.add(p[layer]);           //edges
+                        result.add(p[layer - 1]);           //edges
                     }
                     for (int i = 0; i < upCenters.length; ++i)
                     {
@@ -570,23 +570,66 @@ public class Cuboid extends TwistyPuzzle
                     for (int i = 0; i < frontCenters.length; ++i)
                     {
                         result.add(frontCenters[i][layer - 1]);
-                        result.add(backCenters[i][backCenters[i].length - (layer - 1)]);
+                        result.add(backCenters[i][backCenters[i].length - layer]);
                     }
+                    break;
                 }
             }
             case 2:     //front/back/z
             {
                 if (layer == 0)
                 {
-
+                    for (int i = 0; i < corners.length; i += 2)
+                    {
+                        result.add(corners[i]);     //front corners
+                    }
+                    result.addAll(Arrays.asList(xEdges[0]));    //up edges
+                    result.addAll(Arrays.asList(xEdges[3]));    //down edges
+                    result.addAll(Arrays.asList(yEdges[0]));    //left edges
+                    result.addAll(Arrays.asList(yEdges[3]));    //right edges
+                    for (Piece[] p : frontCenters)
+                    {
+                        result.addAll(Arrays.asList(p));        //front centers
+                    }
+                    break;
                 }
                 else if (layer == depth - 1)
                 {
-
+                    for (int i = 1; i < corners.length; i += 2)
+                    {
+                        result.add(corners[i]);
+                    }
+                    result.addAll(Arrays.asList(xEdges[1]));    //up edges
+                    result.addAll(Arrays.asList(xEdges[2]));    //down edges
+                    result.addAll(Arrays.asList(yEdges[1]));    //left edges
+                    result.addAll(Arrays.asList(yEdges[2]));    //right edges
+                    for (Piece[] p : backCenters)
+                    {
+                        result.addAll(Arrays.asList(p));        //back centers
+                    }
+                    break;
                 }
                 else if (layer < 0 || layer >= depth)
                 {
                     Log.i("getPieces", "invalid layer " + layer + " " + depth);
+                    break;
+                }
+                else
+                {
+                    for (Piece[] p : zEdges)
+                    {
+                        result.add(p[layer - 1]);       //edges
+                    }
+                    result.addAll(Arrays.asList(upCenters[upCenters.length - layer]));      //up centers
+                    result.addAll(Arrays.asList(downCenters[layer - 1]));                   //down centers
+                    for (Piece[] p : leftCenters)
+                    {
+                        result.add(p[p.length - layer]);        //left centers
+                    }
+                    for (Piece[] p : rightCenters)
+                    {
+                        result.add(p[layer - 1]);               //right cetners
+                    }
                     break;
                 }
             }
